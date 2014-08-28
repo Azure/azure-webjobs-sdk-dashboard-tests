@@ -1,0 +1,12 @@
+bin
+obj
+csx
+
+*.user
+*.suo
+*.cscfg
+
+/packages
+/TestResults
+
+/tools/NuGet.exe
