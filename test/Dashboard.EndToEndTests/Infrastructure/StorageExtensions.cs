@@ -29,7 +29,7 @@ namespace Dashboard.EndToEndTests.Infrastructure
 
         private static void RepeatUntilNotFound(Action action)
         {
-            RepeatUntilNotFound(action, TimeSpan.FromSeconds(60));
+            RepeatUntilNotFound(action, TimeSpan.FromSeconds(120));
         }
 
         private static void RepeatUntilNotFound(Action action, TimeSpan timeout)
