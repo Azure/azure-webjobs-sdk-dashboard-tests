@@ -18,9 +18,6 @@ namespace Dashboard.EndToEndTests
         public void SetFixture(DashboardTestFixture data)
         {
             _storageAccount = data.StorageAccount;
-
-            data.StorageAccount.Empty();
-            data.Server.SetStorageConnectionString(data.StorageAccount.ConnectionString);
             _dashboard = data.CreateDashboard();
         }
 
@@ -134,6 +131,7 @@ namespace Dashboard.EndToEndTests
             }
             finally
             {
+                _dashboard.Quit();
                 _storageAccount.RemoveOldHostContainer();
             }
         }

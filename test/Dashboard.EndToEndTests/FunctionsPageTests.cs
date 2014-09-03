@@ -21,15 +21,13 @@ namespace Dashboard.EndToEndTests
         public void SetFixture(DashboardTestFixture data)
         {
             _storageAccount = data.StorageAccount;
-
-            data.StorageAccount.Empty();
-            data.Server.SetStorageConnectionString(data.StorageAccount.ConnectionString);
             _dashboard = data.CreateDashboard();
         }
 
         [Fact]
         public void SingleFunctionIsIndexed()
         {
+            _dashboard.Quit();
             _storageAccount.Empty();
 
             JobHostConfiguration hostConfiguration = new JobHostConfiguration(_storageAccount.ConnectionString)
@@ -77,6 +75,7 @@ namespace Dashboard.EndToEndTests
         [Fact]
         public void AllStatsShowForSingleFunction()
         {
+            _dashboard.Quit();
             _storageAccount.Empty();
 
             JobHostConfiguration hostConfiguration = new JobHostConfiguration(_storageAccount.ConnectionString)

@@ -10,12 +10,11 @@ namespace Dashboard.EndToEndTests.DomAbstractions
     public class WebJobsDashboard : IDisposable
     {
         private readonly BrowserManager _browserManager;
-        private readonly IWebDriver _driver;
+        private readonly BrowserType _browserType;
 
         private readonly string _baseAddress;
 
-        private Lazy<JobsPage> _jobsPage;
-        private Lazy<FunctionsPage> _functionsPage;
+        private IWebDriver _driver;
 
         private bool _isDisposed;
 
@@ -30,18 +29,16 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             _baseAddress = baseAddress;
 
             _browserManager = new BrowserManager();
-            _driver = _browserManager.CreateBrowser(browserType);
-            _driver.Manage().Window.Maximize();
-
-            _jobsPage = new Lazy<JobsPage>(() => new JobsPage(_driver));
-            _functionsPage = new Lazy<FunctionsPage>(() => new FunctionsPage(_driver));
+            _browserType = browserType;
         }
 
         public JobsPage JobsPage
         {
             get
             {
-                return _jobsPage.Value;
+                GuardNotDisposed();
+
+                return new JobsPage(Driver);
             }
         }
 
@@ -49,7 +46,9 @@ namespace Dashboard.EndToEndTests.DomAbstractions
         {
             get
             {
-                return _functionsPage.Value;
+                GuardNotDisposed();
+
+                return new FunctionsPage(Driver);
             }
         }
 
@@ -58,6 +57,7 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             if (!_isDisposed)
             {
                 _isDisposed = true;
+                Quit();
                 _browserManager.Dispose();
             }
         }
@@ -70,8 +70,19 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             }
         }
 
+        public void Quit()
+        {
+            if (_driver != null)
+            {
+                _driver.Quit();
+                _driver = null;
+            }
+        }
+
         public void GoTo(Type page)
         {
+            GuardNotDisposed();
+
             if (page == null)
             {
                 throw new ArgumentNullException("page");
@@ -91,36 +102,42 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             }
         }
 
-        public DashboardPage GetCurrentPage()
-        {
-            DashboardPage page = null;
-
-            if (_driver.PageSource.StartsWith(BuildFullUrl(JobsPage.RelativePath)))
-            {
-                page = JobsPage;
-            }
-            else if (_driver.PageSource.StartsWith(BuildFullUrl(FunctionsPage.RelativePath)))
-            {
-                page = FunctionsPage;
-            }
-
-            return page;
-        }
-
         public string BuildFullUrl(string relativeUrl)
         {
             return _baseAddress + "/" + relativeUrl;
+        }
+
+        private IWebDriver Driver
+        {
+            get
+            {
+                if (_driver == null)
+                {
+                    _driver = _browserManager.CreateBrowser(_browserType);
+                    _driver.Manage().Window.Maximize();
+                }
+
+                return _driver;
+            }
         }
 
         private void GoTo(string address)
         {
             // Go to blank instead because some browser can be flaky upon refresh
             // and the page loaded event might fire before the refresh is complete
-            _driver.Navigate().GoToUrl("about:blank");
-            _driver.WaitForPageLoaded();
-            
-            _driver.Navigate().GoToUrl(address);
-            _driver.WaitForPageLoaded();
+            Driver.Navigate().GoToUrl("about:blank");
+            Driver.WaitForPageLoaded();
+
+            Driver.Navigate().GoToUrl(address);
+            Driver.WaitForPageLoaded();
+        }
+
+        private void GuardNotDisposed()
+        {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(typeof(WebJobsDashboard).Name);
+            }
         }
     }
 }

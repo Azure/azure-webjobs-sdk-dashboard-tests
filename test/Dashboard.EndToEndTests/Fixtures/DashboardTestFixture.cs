@@ -19,9 +19,20 @@ namespace Dashboard.EndToEndTests
         private WebJobsDashboard _dashboard;
 
         public DashboardTestFixture()
+            : this(cleanStorageAccount: true)
+        {
+        }
+
+        public DashboardTestFixture(bool cleanStorageAccount)
         {
             _server = new DashboardServer(GetFromConfigOrEnvironmentOrDefault("DashboardBinariesFolder"));
             _storage = new WebJobsStorageAccount(GetFromConfigOrEnvironmentOrDefault("StorageAccount"));
+            _server.SetStorageConnectionString(_storage.ConnectionString);
+
+            if (cleanStorageAccount)
+            {
+                _storage.Empty();
+            }
         }
 
         public DashboardServer Server
@@ -83,7 +94,7 @@ namespace Dashboard.EndToEndTests
                 throw new ObjectDisposedException(typeof(DashboardServer).Name);
             }
         }
-        
+
         private string GetFromConfigOrEnvironmentOrDefault(string keyName)
         {
             string value = ConfigurationManager.AppSettings[keyName];

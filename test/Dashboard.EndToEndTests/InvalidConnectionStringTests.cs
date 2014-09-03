@@ -9,13 +9,12 @@ using Xunit;
 
 namespace Dashboard.EndToEndTests
 {
-    public class InvalidConnectionStringTests : IUseFixture<DashboardTestFixture>
+    public class InvalidConnectionStringTests : IUseFixture<InvalidConnectionStringDashboardTestFixture>
     {
         private WebJobsDashboard _dashboard;
 
-        public void SetFixture(DashboardTestFixture data)
+        public void SetFixture(InvalidConnectionStringDashboardTestFixture data)
         {
-            data.Server.SetStorageConnectionString("DefaultEndpointsProtocol=https;AccountName=xxxxxxxxxx;AccountKey=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX==");
             _dashboard = data.CreateDashboard();
         }
 

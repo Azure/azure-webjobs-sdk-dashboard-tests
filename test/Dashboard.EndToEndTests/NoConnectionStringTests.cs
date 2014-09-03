@@ -9,13 +9,12 @@ using Xunit;
 
 namespace Dashboard.EndToEndTests
 {
-    public class NoConnectionStringTests : IUseFixture<DashboardTestFixture>
+    public class NoConnectionStringTests : IUseFixture<NoConnectionStringDashboardTestFixture>
     {
         private WebJobsDashboard _dashboard;
 
-        public void SetFixture(DashboardTestFixture data)
+        public void SetFixture(NoConnectionStringDashboardTestFixture data)
         {
-            data.Server.SetStorageConnectionString(null);
             _dashboard = data.CreateDashboard();
         }
 
