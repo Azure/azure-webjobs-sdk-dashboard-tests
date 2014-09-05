@@ -9,33 +9,33 @@ using Xunit;
 
 namespace Dashboard.EndToEndTests
 {
-    public class NoConnectionStringTests : IUseFixture<NoConnectionStringDashboardTestFixture>
+    public class NoConnectionStringTestsFixture : DashboardTestFixture
     {
-        private WebJobsDashboard _dashboard;
-
-        public void SetFixture(NoConnectionStringDashboardTestFixture data)
+        public NoConnectionStringTestsFixture()
+            : base(cleanStorageAccount: false)
         {
-            _dashboard = data.CreateDashboard();
+            Server.SetStorageConnectionString(null);
         }
+    }
 
+    public class NoConnectionStringTests : DashboardTestClass<NoConnectionStringTestsFixture>
+    {
         [Fact]
         public void NavbarTitle()
         {
-            _dashboard.GoTo(typeof(JobsPage));
-            JobsPage page = _dashboard.JobsPage;
+            JobsPage page = Dashboard.GoToJobsPage();
             
             // Verify title
             Link title = page.Navbar.TitleLink;
             Assert.True(title.IsUserAccesible);
             Assert.Equal("Microsoft Azure WebJobs", title.Text);
-            Assert.Equal(_dashboard.BuildFullUrl(JobsPage.RelativePath), title.Href);
+            Assert.Equal(Dashboard.BuildFullUrl(JobsPage.RelativePath), title.Href);
         }
 
         [Fact]
-        public void NavbarHasOnlyJobsButtons()
+        public void Navbar_Buttons()
         {
-            _dashboard.GoTo(typeof(JobsPage));
-            JobsPage page = _dashboard.JobsPage;
+            JobsPage page = Dashboard.GoToJobsPage();
             
             // Verify navbar buttons
             IEnumerable<Link> links = page.Navbar.NavLinks;
@@ -44,14 +44,13 @@ namespace Dashboard.EndToEndTests
             Link functionLink = links.First();
             Assert.True(functionLink.IsUserAccesible);
             Assert.Equal("Functions", functionLink.Text);
-            Assert.Equal(_dashboard.BuildFullUrl(FunctionsPage.RelativePath), functionLink.Href);
+            Assert.Equal(Dashboard.BuildFullUrl(FunctionsPage.RelativePath), functionLink.Href);
         }
 
         [Fact]
-        public void NoJobs()
+        public void JobsPage_NoJobs()
         {
-            _dashboard.GoTo(typeof(JobsPage));
-            JobsPage page = _dashboard.JobsPage;
+            JobsPage page = Dashboard.GoToJobsPage();
             
             Header header = page.JobsSection.Title;
             Assert.True(header.IsUserAccesible);
@@ -71,10 +70,9 @@ namespace Dashboard.EndToEndTests
         }
 
         [Fact]
-        public void FunctionsPage_NoConnectionString()
+        public void FunctionsPage_SdkTeaser()
         {
-            _dashboard.GoTo(typeof(FunctionsPage));
-            FunctionsPage page = _dashboard.FunctionsPage;
+            FunctionsPage page = Dashboard.GoToFunctionsPage();
 
             SdkTeaserNotification sdkTeaserNotification = page.SdkTeaserNotificationSection.SdkTeaserNotification;
             Assert.True(sdkTeaserNotification.IsUserAccesible);

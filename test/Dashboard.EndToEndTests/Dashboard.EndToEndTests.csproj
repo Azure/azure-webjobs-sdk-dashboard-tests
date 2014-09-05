@@ -43,6 +43,8 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CleanStorageAccountTests.cs" />
+    <Compile Include="DashboardTestClass.cs" />
+    <Compile Include="DomAbstractions\Api.cs" />
     <Compile Include="DomAbstractions\Notifications\BadConnectionStringNotification.cs" />
     <Compile Include="DomAbstractions\Notifications\ErrorsNotificationSection.cs" />
     <Compile Include="DomAbstractions\Notifications\Notification.cs" />
@@ -52,8 +54,11 @@
     <Compile Include="DomAbstractions\Notifications\SdkTeaserNotificationSection.cs" />
     <Compile Include="DomAbstractions\Pages\AboutPage.cs" />
     <Compile Include="DomAbstractions\Pages\DashboardPage.cs" />
+    <Compile Include="DomAbstractions\Pages\FunctionDefinitionPage.cs" />
     <Compile Include="DomAbstractions\Pages\FunctionsPage.cs" />
+    <Compile Include="DomAbstractions\Pages\RunFunctionPage.cs" />
     <Compile Include="DomAbstractions\Pages\SearchBlobPage.cs" />
+    <Compile Include="DomAbstractions\Sections\DefinitionSection.cs" />
     <Compile Include="DomAbstractions\Sections\FunctionsSection.cs" />
     <Compile Include="DomAbstractions\Sections\InvocationsSection.cs" />
     <Compile Include="DomAbstractions\Sections\JobsSection.cs" />
@@ -64,9 +69,9 @@
     <Compile Include="DomAbstractions\Tables\JobStatus.cs" />
     <Compile Include="DomAbstractions\WebJobsDashboard.cs" />
     <Compile Include="DomAbstractions\Waiters.cs" />
-    <Compile Include="Fixtures\InvalidConnectionStringDashboardTestFixture.cs" />
-    <Compile Include="Fixtures\NoConnectionStringDashboardTestFixture.cs" />
-    <Compile Include="FunctionsPageTests.cs" />
+    <Compile Include="Functions.cs" />
+    <Compile Include="FunctionWithInvocationsTests.cs" />
+    <Compile Include="FunctionWithoutInvocationsTests.cs" />
     <Compile Include="HtmlAbstractions\Header.cs" />
     <Compile Include="DomAbstractions\Pages\JobsPage.cs" />
     <Compile Include="HtmlAbstractions\Link.cs" />
@@ -78,13 +83,15 @@
     <Compile Include="HtmlAbstractions\TableCell.cs" />
     <Compile Include="HtmlAbstractions\TableRow.cs" />
     <Compile Include="HtmlAbstractions\Tags.cs" />
+    <Compile Include="Infrastructure\DashboardData\FunctionInfo.cs" />
+    <Compile Include="Infrastructure\DashboardData\HostInfo.cs" />
     <Compile Include="Infrastructure\DashboardServer.cs" />
     <Compile Include="Infrastructure\StorageExtensions.cs" />
     <Compile Include="Infrastructure\WebJobsStorageAccount.cs" />
     <Compile Include="NoConnectionStringTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InvalidConnectionStringTests.cs" />
-    <Compile Include="Fixtures\DashboardTestFixture.cs" />
+    <Compile Include="DashboardTestFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Azure.WebJobs, Version=0.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -132,6 +139,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Spatial, Version=5.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Spatial.5.6.0\lib\net40\System.Spatial.dll</HintPath>
     </Reference>
@@ -169,7 +178,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

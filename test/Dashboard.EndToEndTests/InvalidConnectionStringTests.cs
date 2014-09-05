@@ -9,20 +9,21 @@ using Xunit;
 
 namespace Dashboard.EndToEndTests
 {
-    public class InvalidConnectionStringTests : IUseFixture<InvalidConnectionStringDashboardTestFixture>
+    public class InvalidConnectionStringTestsFixture : DashboardTestFixture
     {
-        private WebJobsDashboard _dashboard;
-
-        public void SetFixture(InvalidConnectionStringDashboardTestFixture data)
+        public InvalidConnectionStringTestsFixture()
+            : base(cleanStorageAccount: false)
         {
-            _dashboard = data.CreateDashboard();
+            Server.SetStorageConnectionString("DefaultEndpointsProtocol=https;AccountName=xxxxxxxxxx;AccountKey=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX==");
         }
+    }
 
+    public class InvalidConnectionStringTests : DashboardTestClass<InvalidConnectionStringTestsFixture>
+    {
         [Fact]
-        public void FunctionsPage_BadCredentialsConnectionString()
+        public void FunctionsPage_Warning()
         {
-            _dashboard.GoTo(typeof(FunctionsPage));
-            FunctionsPage page = _dashboard.FunctionsPage;
+            FunctionsPage page = Dashboard.GoToFunctionsPage();
 
             BadConnectionStringNotification notification = page.ErrorsNotificationSection.BadConnectionStringNotification;
             Assert.True(notification.IsUserAccesible);
@@ -31,10 +32,9 @@ namespace Dashboard.EndToEndTests
         }
 
         [Fact]
-        public void NavbarHasOnlyJobsButtons()
+        public void Navbar_Buttons()
         {
-            _dashboard.GoTo(typeof(JobsPage));
-            JobsPage page = _dashboard.JobsPage;
+            JobsPage page = Dashboard.GoToJobsPage();
             
             // Verify navbar
             IEnumerable<Link> links = page.Navbar.NavLinks;
@@ -43,7 +43,7 @@ namespace Dashboard.EndToEndTests
             Link functionLink = links.First();
             Assert.True(functionLink.IsUserAccesible);
             Assert.Equal("Functions", functionLink.Text);
-            Assert.Equal(_dashboard.BuildFullUrl(FunctionsPage.RelativePath), functionLink.Href);
+            Assert.Equal(Dashboard.BuildFullUrl(FunctionsPage.RelativePath), functionLink.Href);
         }
     }
 }

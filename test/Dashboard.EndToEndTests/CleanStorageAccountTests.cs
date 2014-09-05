@@ -10,22 +10,20 @@ using Xunit;
 
 namespace Dashboard.EndToEndTests
 {
-    public class CleanStorageAccountTests : IUseFixture<DashboardTestFixture>
+    public class CleanStorageAccountTests : DashboardTestClass<DashboardTestFixture>
     {
-        private WebJobsDashboard _dashboard;
         private WebJobsStorageAccount _storageAccount;
 
-        public void SetFixture(DashboardTestFixture data)
+        public override void SetFixture(DashboardTestFixture data)
         {
+            base.SetFixture(data);
             _storageAccount = data.StorageAccount;
-            _dashboard = data.CreateDashboard();
         }
 
         [Fact]
-        public void NavbarHasAllButtons()
+        public void Navbar_Buttons()
         {
-            _dashboard.GoTo(typeof(JobsPage));
-            JobsPage page = _dashboard.JobsPage;
+            JobsPage page = Dashboard.GoToJobsPage();
 
             Navbar navbar = page.Navbar;
 
@@ -33,7 +31,7 @@ namespace Dashboard.EndToEndTests
             Link title = navbar.TitleLink;
             Assert.True(title.IsUserAccesible);
             Assert.Equal("Microsoft Azure WebJobs", title.Text);
-            Assert.Equal(_dashboard.BuildFullUrl(JobsPage.RelativePath), title.Href);
+            Assert.Equal(Dashboard.BuildFullUrl(JobsPage.RelativePath), title.Href);
 
             // Verify navbar
             IEnumerable<Link> links = navbar.NavLinks;
@@ -42,24 +40,23 @@ namespace Dashboard.EndToEndTests
             Link functionLink = links.ElementAt(0);
             Assert.True(functionLink.IsUserAccesible);
             Assert.Equal("Functions", functionLink.Text);
-            Assert.Equal(_dashboard.BuildFullUrl(FunctionsPage.RelativePath), functionLink.Href);
+            Assert.Equal(Dashboard.BuildFullUrl(FunctionsPage.RelativePath), functionLink.Href);
 
             Link searchLink = links.ElementAt(1);
             Assert.True(searchLink.IsUserAccesible);
             Assert.Equal("Search Blobs", searchLink.Text);
-            Assert.Equal(_dashboard.BuildFullUrl(SearchBlobPage.RelativePath), searchLink.Href);
+            Assert.Equal(Dashboard.BuildFullUrl(SearchBlobPage.RelativePath), searchLink.Href);
 
             Link aboutLink = links.ElementAt(2);
             Assert.True(functionLink.IsUserAccesible);
             Assert.Equal("About", aboutLink.Text);
-            Assert.Equal(_dashboard.BuildFullUrl(AboutPage.RelativePath), aboutLink.Href);
+            Assert.Equal(Dashboard.BuildFullUrl(AboutPage.RelativePath), aboutLink.Href);
         }
 
         [Fact]
-        public void FunctionsPageHasNoFunctions()
+        public void FunctionsPage_NoFunctions()
         {
-            _dashboard.GoTo(typeof(FunctionsPage));
-            FunctionsPage page = _dashboard.FunctionsPage;
+            FunctionsPage page = Dashboard.GoToFunctionsPage();
 
             FunctionsSection section = page.FunctionsSection;
             Assert.True(section.IsUserAccesible);
@@ -85,10 +82,9 @@ namespace Dashboard.EndToEndTests
         }
 
         [Fact]
-        public void FunctionsPageHasNoInvocations()
+        public void FunctionsPage_NoInvocations()
         {
-            _dashboard.GoTo(typeof(FunctionsPage));
-            FunctionsPage page = _dashboard.FunctionsPage;
+            FunctionsPage page = Dashboard.GoToFunctionsPage();
 
             InvocationsSection section = page.InvocationsSection;
             Assert.True(section.IsUserAccesible);
@@ -113,14 +109,13 @@ namespace Dashboard.EndToEndTests
         }
 
         [Fact]
-        public void FunctionsPageOldHost()
+        public void FunctionsPage_OldHost()
         {
             try
             {
                 _storageAccount.CreateOldHostContainer();
 
-                _dashboard.GoTo(typeof(FunctionsPage));
-                FunctionsPage page = _dashboard.FunctionsPage;
+                FunctionsPage page = Dashboard.GoToFunctionsPage();
 
                 OldHostNotification notification = page.ErrorsNotificationSection.OldHostNotification;
                 Assert.True(notification.IsUserAccesible);
@@ -131,7 +126,7 @@ namespace Dashboard.EndToEndTests
             }
             finally
             {
-                _dashboard.Quit();
+                Dashboard.Quit();
                 _storageAccount.RemoveOldHostContainer();
             }
         }

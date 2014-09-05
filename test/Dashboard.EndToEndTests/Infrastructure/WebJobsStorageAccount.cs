@@ -4,11 +4,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
 
 namespace Dashboard.EndToEndTests.Infrastructure
 {
@@ -58,6 +61,73 @@ namespace Dashboard.EndToEndTests.Infrastructure
             CloudBlobClient blobClient = _storageAccount.CreateCloudBlobClient();
             CloudBlobContainer container = blobClient.GetContainerReference(OldHostContainerName);
             container.DeleteAndWaitForCompletion();
+        }
+
+        public string MethodInfoToFunctionDefinitionId(MethodInfo methodInfo)
+        {
+            if (methodInfo == null)
+            {
+                throw new ArgumentNullException("methodInfo");
+            }
+
+            string hostId = AssemblyToHostId(methodInfo.DeclaringType.Assembly);
+            if (hostId == null)
+            {
+                return null;
+            }
+
+            string methodName = methodInfo.DeclaringType.FullName + "." + methodInfo.Name;
+
+            CloudBlobClient blobClient = _storageAccount.CreateCloudBlobClient();
+            CloudBlobContainer dashboardContainer = blobClient.GetContainerReference("azure-jobs-dashboard");
+            if (!dashboardContainer.Exists())
+            {
+                return null;
+            }
+
+            CloudBlockBlob hostBlob = dashboardContainer.GetBlockBlobReference("hosts/azure-jobs-host-" + hostId);
+            if (!hostBlob.Exists())
+            {
+                return null;
+            }
+
+            string blobContent = hostBlob.DownloadText();
+
+            HostInfo hostInfo = JsonConvert.DeserializeObject<HostInfo>(blobContent);
+            FunctionInfo functionInfo = hostInfo.Functions.SingleOrDefault(f => methodName == f.FullName);
+            if (functionInfo == null)
+            {
+                return null;
+            }
+
+            return functionInfo.Id;
+        }
+
+        public string AssemblyToHostId(Assembly assembly)
+        {
+            if (assembly == null)
+            {
+                throw new ArgumentNullException("assembly");
+            }
+
+            CloudBlobClient blobClient = _storageAccount.CreateCloudBlobClient();
+            CloudBlobContainer hostsContainer = blobClient.GetContainerReference("azure-jobs-hosts");
+            if (!hostsContainer.Exists())
+            {
+                return null;
+            }
+
+            CloudBlockBlob hostBlob = hostsContainer.GetBlockBlobReference(string.Format("ids/{0}/{1}",
+                _storageAccount.Credentials.AccountName,
+                assembly.FullName));
+            if (!hostBlob.Exists())
+            {
+                return null;
+            }
+
+            string hostId = hostBlob.DownloadText();
+
+            return string.IsNullOrWhiteSpace(hostId) ? null : hostId;
         }
 
         /// <summary>

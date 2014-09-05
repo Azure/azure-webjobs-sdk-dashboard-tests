@@ -14,13 +14,15 @@ namespace Dashboard.EndToEndTests.DomAbstractions
 
         private readonly string _baseAddress;
 
+        private readonly Api _api;
+
         private IWebDriver _driver;
 
         private bool _isDisposed;
 
         public WebJobsDashboard(string baseAddress, BrowserType browserType)
         {
-            
+
             if (string.IsNullOrWhiteSpace(baseAddress))
             {
                 throw new ArgumentNullException("baseAddress");
@@ -30,25 +32,15 @@ namespace Dashboard.EndToEndTests.DomAbstractions
 
             _browserManager = new BrowserManager();
             _browserType = browserType;
+
+            _api = new Api(baseAddress);
         }
 
-        public JobsPage JobsPage
+        public Api Api
         {
             get
             {
-                GuardNotDisposed();
-
-                return new JobsPage(Driver);
-            }
-        }
-
-        public FunctionsPage FunctionsPage
-        {
-            get
-            {
-                GuardNotDisposed();
-
-                return new FunctionsPage(Driver);
+                return _api;
             }
         }
 
@@ -79,27 +71,28 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             }
         }
 
-        public void GoTo(Type page)
+        public JobsPage GoToJobsPage()
         {
             GuardNotDisposed();
 
-            if (page == null)
-            {
-                throw new ArgumentNullException("page");
-            }
+            GoTo(BuildFullUrl(JobsPage.RelativePath));
+            return new JobsPage(Driver);
+        }
 
-            if (page == typeof(JobsPage))
-            {
-                GoTo(BuildFullUrl(JobsPage.RelativePath));
-            }
-            else if (page == typeof(FunctionsPage))
-            {
-                GoTo(BuildFullUrl(FunctionsPage.RelativePath));
-            }
-            else
-            {
-                throw new ArgumentException("Unknown page type: " + page);
-            }
+        public FunctionsPage GoToFunctionsPage()
+        {
+            GuardNotDisposed();
+
+            GoTo(BuildFullUrl(FunctionsPage.RelativePath));
+            return new FunctionsPage(Driver);
+        }
+
+        public FunctionDefinitionPage GoToFunctionDefinitionPage(string functionDefinitonId)
+        {
+            GuardNotDisposed();
+
+            GoTo(BuildFullUrl(FunctionDefinitionPage.ConstructRelativePath(functionDefinitonId)));
+            return new FunctionDefinitionPage(Driver);
         }
 
         public string BuildFullUrl(string relativeUrl)

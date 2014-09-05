@@ -12,10 +12,31 @@ namespace Dashboard.EndToEndTests.DomAbstractions
 {
     public static class Waiters
     {
+        public static void WaitForAction(Func<bool> action)
+        {
+            WaitForAction(action, TimeSpan.FromSeconds(15));
+        }
+
+        public static void WaitForAction(Func<bool> action, TimeSpan timeout)
+        {
+            DateTime startTime = DateTime.Now;
+
+            while ((DateTime.Now - startTime) <= timeout)
+            {
+                if (action())
+                {
+                    return;
+                }
+
+                Thread.Sleep(500);
+            }
+
+            throw new TimeoutException("Operation failed");
+        }
+
         public static T WaitForElementToAppear<T>(Func<T> actionToWait)
         {
-            const int DefaultTimeoutInSeconds = 10;
-            return WaitForElementToAppear(actionToWait, TimeSpan.FromSeconds(DefaultTimeoutInSeconds));
+            return WaitForElementToAppear(actionToWait, TimeSpan.FromSeconds(10));
         }
 
         public static T WaitForElementToAppear<T>(Func<T> actionToWait, TimeSpan timeout)
@@ -40,8 +61,7 @@ namespace Dashboard.EndToEndTests.DomAbstractions
 
         public static void WaitForDataToLoad(this Table table)
         {
-            const int DefaultTimeoutInSeconds = 15;
-            WaitForDataToLoad(table, TimeSpan.FromSeconds(DefaultTimeoutInSeconds));
+            WaitForDataToLoad(table, TimeSpan.FromSeconds(15));
         }
 
         public static void WaitForDataToLoad(this Table table, TimeSpan timeout)

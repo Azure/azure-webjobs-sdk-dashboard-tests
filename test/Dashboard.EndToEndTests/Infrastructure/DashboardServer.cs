@@ -30,7 +30,7 @@ namespace Dashboard.EndToEndTests.Infrastructure
             {
                 throw new ArgumentNullException(deployPath);
             }
-
+            
             _server = WebServer.Create(WebServerType.IISExpress);
             _application = _server.CreateWebApplication(ApplicationName);
             _application.Deploy(deployPath);

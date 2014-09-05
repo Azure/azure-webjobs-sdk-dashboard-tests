@@ -6,9 +6,9 @@ using OpenQA.Selenium;
 
 namespace Dashboard.EndToEndTests.DomAbstractions
 {
-    public class InvocationsSection : PageElement
+    public class DefinitionSection : PageElement
     {
-        internal InvocationsSection(IWebElement sectionElement)
+        internal DefinitionSection(IWebElement sectionElement)
             : base(sectionElement)
         {
         }
@@ -19,6 +19,16 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             {
                 IWebElement displayHeader = RawElement.FindElement(By.TagName(Tags.H3));
                 return new Header(displayHeader);
+            }
+        }
+
+        public Link RunFunctionLink
+        {
+            get
+            {
+                const string selector = "p>a.btn";
+                IWebElement linkElement = RawElement.FindElement(By.CssSelector(selector));
+                return new Link(linkElement);
             }
         }
 
