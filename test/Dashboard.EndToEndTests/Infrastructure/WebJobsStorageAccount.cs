@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Dashboard.EndToEndTests.Infrastructure.DashboardData;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Queue;
@@ -17,10 +18,22 @@ namespace Dashboard.EndToEndTests.Infrastructure
 {
     public class WebJobsStorageAccount
     {
-        private const string OldHostContainerName = "azure-jobs-dashboard-hosts";
+        public const string DashboardContainerName = "azure-jobs-dashboard";
+        public const string HostsContainerName = "azure-jobs-hosts";
+        public const string HostOutputContainerName = "azure-jobs-host-output";
+        public const string OldHostContainerName = "azure-jobs-dashboard-hosts";
+
+        private const string FunctionsByFunctionIndexPrefix = "functions/recent/by-function/";
+        private const string FunctionsInstancesIndexPrefix = "functions/instances/";
+        private const string HostsIndexPrefix = "hosts/azure-jobs-host-";
+        private const string HostIdsIndexPrefix = "ids";
 
         private readonly string _connectionString;
         private readonly CloudStorageAccount _storageAccount;
+
+        private readonly CloudBlobClient _blobClient;
+        private readonly CloudBlobContainer _dashboardContainer;
+        private readonly CloudBlobContainer _hostsContainer;
 
         public WebJobsStorageAccount(string connectionString)
         {
@@ -31,6 +44,9 @@ namespace Dashboard.EndToEndTests.Infrastructure
 
             _connectionString = connectionString;
             _storageAccount = CloudStorageAccount.Parse(connectionString);
+            _blobClient = _storageAccount.CreateCloudBlobClient();
+            _dashboardContainer = _blobClient.GetContainerReference(DashboardContainerName);
+            _hostsContainer = _blobClient.GetContainerReference(HostsContainerName);
         }
 
         public CloudStorageAccount CloudStorageAccount
@@ -51,16 +67,40 @@ namespace Dashboard.EndToEndTests.Infrastructure
 
         public void CreateOldHostContainer()
         {
-            CloudBlobClient blobClient = _storageAccount.CreateCloudBlobClient();
-            CloudBlobContainer container = blobClient.GetContainerReference(OldHostContainerName);
+            CloudBlobContainer container = _blobClient.GetContainerReference(OldHostContainerName);
             container.CreateIfNotExists();
         }
 
         public void RemoveOldHostContainer()
         {
-            CloudBlobClient blobClient = _storageAccount.CreateCloudBlobClient();
-            CloudBlobContainer container = blobClient.GetContainerReference(OldHostContainerName);
+            CloudBlobContainer container = _blobClient.GetContainerReference(OldHostContainerName);
             container.DeleteAndWaitForCompletion();
+        }
+
+        public IEnumerable<InvocationDetails> MethodInfoToInvocations(MethodInfo methodInfo)
+        {
+            string functionDefinitionId = MethodInfoToFunctionDefinitionId(methodInfo);
+            if (functionDefinitionId == null)
+            {
+                yield break;
+            }
+
+            IEnumerable<IListBlobItem> invocationIndices = _dashboardContainer.ListBlobs(
+                FunctionsByFunctionIndexPrefix + functionDefinitionId,
+                useFlatBlobListing: true);
+            foreach (CloudBlockBlob invocationIndexBlob in invocationIndices.OfType<CloudBlockBlob>())
+            {
+                string invocationId = invocationIndexBlob.Name.Split('_').Last();
+
+                CloudBlockBlob invocationBlob = _dashboardContainer.GetBlockBlobReference(FunctionsInstancesIndexPrefix + invocationId);
+                if (!invocationBlob.Exists())
+                {
+                    continue;
+                }
+
+                string blobContent = invocationBlob.DownloadText();
+                yield return JsonConvert.DeserializeObject<InvocationDetails>(blobContent);
+            }
         }
 
         public string MethodInfoToFunctionDefinitionId(MethodInfo methodInfo)
@@ -78,14 +118,12 @@ namespace Dashboard.EndToEndTests.Infrastructure
 
             string methodName = methodInfo.DeclaringType.FullName + "." + methodInfo.Name;
 
-            CloudBlobClient blobClient = _storageAccount.CreateCloudBlobClient();
-            CloudBlobContainer dashboardContainer = blobClient.GetContainerReference("azure-jobs-dashboard");
-            if (!dashboardContainer.Exists())
+            if (!_dashboardContainer.Exists())
             {
                 return null;
             }
 
-            CloudBlockBlob hostBlob = dashboardContainer.GetBlockBlobReference("hosts/azure-jobs-host-" + hostId);
+            CloudBlockBlob hostBlob = _dashboardContainer.GetBlockBlobReference(HostsIndexPrefix + hostId);
             if (!hostBlob.Exists())
             {
                 return null;
@@ -110,14 +148,12 @@ namespace Dashboard.EndToEndTests.Infrastructure
                 throw new ArgumentNullException("assembly");
             }
 
-            CloudBlobClient blobClient = _storageAccount.CreateCloudBlobClient();
-            CloudBlobContainer hostsContainer = blobClient.GetContainerReference("azure-jobs-hosts");
-            if (!hostsContainer.Exists())
+            if (!_hostsContainer.Exists())
             {
                 return null;
             }
 
-            CloudBlockBlob hostBlob = hostsContainer.GetBlockBlobReference(string.Format("ids/{0}/{1}",
+            CloudBlockBlob hostBlob = _hostsContainer.GetBlockBlobReference(string.Format(HostIdsIndexPrefix + "/{0}/{1}",
                 _storageAccount.Credentials.AccountName,
                 assembly.FullName));
             if (!hostBlob.Exists())

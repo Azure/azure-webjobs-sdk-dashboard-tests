@@ -47,6 +47,7 @@
     <Compile Include="DomAbstractions\Api.cs" />
     <Compile Include="DomAbstractions\Notifications\BadConnectionStringNotification.cs" />
     <Compile Include="DomAbstractions\Notifications\ErrorsNotificationSection.cs" />
+    <Compile Include="DomAbstractions\Notifications\InvocationStatusNotification.cs" />
     <Compile Include="DomAbstractions\Notifications\Notification.cs" />
     <Compile Include="DomAbstractions\Notifications\NotificationSection.cs" />
     <Compile Include="DomAbstractions\Notifications\OldHostNotification.cs" />
@@ -55,13 +56,17 @@
     <Compile Include="DomAbstractions\Pages\AboutPage.cs" />
     <Compile Include="DomAbstractions\Pages\DashboardPage.cs" />
     <Compile Include="DomAbstractions\Pages\FunctionDefinitionPage.cs" />
+    <Compile Include="DomAbstractions\Pages\FunctionInvocationPage.cs" />
     <Compile Include="DomAbstractions\Pages\FunctionsPage.cs" />
     <Compile Include="DomAbstractions\Pages\RunFunctionPage.cs" />
     <Compile Include="DomAbstractions\Pages\SearchBlobPage.cs" />
     <Compile Include="DomAbstractions\Sections\DefinitionSection.cs" />
     <Compile Include="DomAbstractions\Sections\FunctionsSection.cs" />
+    <Compile Include="DomAbstractions\Sections\InvocationDetailsSection.cs" />
     <Compile Include="DomAbstractions\Sections\InvocationsSection.cs" />
     <Compile Include="DomAbstractions\Sections\JobsSection.cs" />
+    <Compile Include="DomAbstractions\Tables\FunctionArgumentsTable.cs" />
+    <Compile Include="DomAbstractions\Tables\FunctionArgumentsTableRow.cs" />
     <Compile Include="DomAbstractions\Tables\FunctionsTable.cs" />
     <Compile Include="DomAbstractions\Tables\FunctionsTableRow.cs" />
     <Compile Include="DomAbstractions\Tables\JobsTable.cs" />
@@ -83,8 +88,10 @@
     <Compile Include="HtmlAbstractions\TableCell.cs" />
     <Compile Include="HtmlAbstractions\TableRow.cs" />
     <Compile Include="HtmlAbstractions\Tags.cs" />
+    <Compile Include="Infrastructure\DashboardData\Argument.cs" />
     <Compile Include="Infrastructure\DashboardData\FunctionInfo.cs" />
     <Compile Include="Infrastructure\DashboardData\HostInfo.cs" />
+    <Compile Include="Infrastructure\DashboardData\InvocationDetails.cs" />
     <Compile Include="Infrastructure\DashboardServer.cs" />
     <Compile Include="Infrastructure\StorageExtensions.cs" />
     <Compile Include="Infrastructure\WebJobsStorageAccount.cs" />

@@ -6,6 +6,7 @@ namespace Dashboard.EndToEndTests.HtmlAbstractions
     internal static class Tags
     {
         public const string A = "a";
+        public const string B = "b";
         public const string Code = "code";
         public const string Div = "div";
         public const string H3 = "h3";
