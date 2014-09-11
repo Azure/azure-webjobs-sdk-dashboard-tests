@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using Dashboard.EndToEndTests.DomAbstractions;
 using Dashboard.EndToEndTests.HtmlAbstractions;
+using Dashboard.EndToEndTests.HtmlAbstractions.Angular;
 using Dashboard.EndToEndTests.Infrastructure;
 using Dashboard.EndToEndTests.Infrastructure.DashboardData;
 using Microsoft.Azure.WebJobs;
@@ -28,11 +29,11 @@ namespace Dashboard.EndToEndTests
             };
 
             JobHost host = new JobHost(hostConfiguration);
-            host.Call(FunctionInfo, new { fail = false });
-            host.Call(FunctionInfo, new { fail = false });
+            host.Call(FunctionInfo, new { fail = false, logOnSuccess = true });
+            host.Call(FunctionInfo, new { fail = false, logOnSuccess = false });
             try
             {
-                host.Call(FunctionInfo, new { fail = true });
+                host.Call(FunctionInfo, new { fail = true, logOnSuccess = false });
             }
             catch (InvalidOperationException)
             {
@@ -50,7 +51,7 @@ namespace Dashboard.EndToEndTests
         private WebJobsStorageAccount _storageAccount;
         private string _functionDefinitionId;
         private IEnumerable<InvocationDetails> _invocations;
-
+       
         public override void SetFixture(FunctionWithInvocationsTestsFixture data)
         {
             base.SetFixture(data);
@@ -74,17 +75,27 @@ namespace Dashboard.EndToEndTests
             {
                 return _storageAccount
                     .MethodInfoToInvocations(FunctionWithInvocationsTestsFixture.FunctionInfo)
-                    .First(invocation => !invocation.Succeeded);
+                    .Single(invocation => !invocation.Succeeded);
             }
         }
 
-        private InvocationDetails SuccessfulInvocation
+        private InvocationDetails SuccessfulInvocationWithLog
         {
             get
             {
                 return _storageAccount
                     .MethodInfoToInvocations(FunctionWithInvocationsTestsFixture.FunctionInfo)
-                    .First(invocation => invocation.Succeeded);
+                    .Single(invocation => invocation.Succeeded && invocation.Arguments["logOnSuccess"].Value == "True");
+            }
+        }
+
+        private InvocationDetails SuccessfulInvocationWithoutLog
+        {
+            get
+            {
+                return _storageAccount
+                    .MethodInfoToInvocations(FunctionWithInvocationsTestsFixture.FunctionInfo)
+                    .Single(invocation => invocation.Succeeded && invocation.Arguments["logOnSuccess"].Value == "False");
             }
         }
 
@@ -134,7 +145,7 @@ namespace Dashboard.EndToEndTests
             InvocationDetailsSection section = page.DetailsSection;
             Assert.True(section.IsUserAccesible);
 
-            Assert.Equal("Invocation Details SingleFunction.Function (True)", section.Title.Text);
+            Assert.Equal("Invocation Details SingleFunction.Function (True, False, )", section.Title.Text);
         }
 
         [Fact]
@@ -175,16 +186,28 @@ namespace Dashboard.EndToEndTests
             FunctionArgumentsTable table = section.ArgumentsTable;
             Assert.True(table.IsUserAccesible);
 
-            FunctionArgumentsTableRow tableRow = table.BodyRows.Single() as FunctionArgumentsTableRow;
+            Assert.Equal(3, table.BodyRows.Count());
+
+            FunctionArgumentsTableRow tableRow = table.BodyRows.ElementAt(0) as FunctionArgumentsTableRow;
             Assert.Equal("fail", tableRow.Name);
             Assert.Equal("True", tableRow.Value);
+            Assert.Equal("", tableRow.Notes);
+
+            tableRow = table.BodyRows.ElementAt(1) as FunctionArgumentsTableRow;
+            Assert.Equal("logOnSuccess", tableRow.Name);
+            Assert.Equal("False", tableRow.Value);
+            Assert.Equal("", tableRow.Notes);
+
+            tableRow = table.BodyRows.ElementAt(2) as FunctionArgumentsTableRow;
+            Assert.Equal("log", tableRow.Name);
+            Assert.Equal("", tableRow.Value);
             Assert.Equal("", tableRow.Notes);
         }
 
         [Fact]
         public void FunctionInvocationPage_SuccessfulFunction_Details()
         {
-            FunctionInvocationPage page = Dashboard.GoToFunctionInvocationPage(SuccessfulInvocation.Id);
+            FunctionInvocationPage page = Dashboard.GoToFunctionInvocationPage(SuccessfulInvocationWithLog.Id);
 
             InvocationDetailsSection section = page.DetailsSection;
             InvocationStatusNotification statusNotification = section.StatusNotification;
@@ -195,16 +218,98 @@ namespace Dashboard.EndToEndTests
         [Fact]
         public void FunctionInvocationPage_SuccessfulFunction_Arguments()
         {
-            FunctionInvocationPage page = Dashboard.GoToFunctionInvocationPage(SuccessfulInvocation.Id);
+            FunctionInvocationPage page = Dashboard.GoToFunctionInvocationPage(SuccessfulInvocationWithLog.Id);
 
             InvocationDetailsSection section = page.DetailsSection;
             FunctionArgumentsTable table = section.ArgumentsTable;
             Assert.True(table.IsUserAccesible);
 
-            FunctionArgumentsTableRow tableRow = table.BodyRows.Single() as FunctionArgumentsTableRow;
+            FunctionArgumentsTableRow tableRow = table.BodyRows.ElementAt(0) as FunctionArgumentsTableRow;
             Assert.Equal("fail", tableRow.Name);
             Assert.Equal("False", tableRow.Value);
             Assert.Equal("", tableRow.Notes);
+
+            tableRow = table.BodyRows.ElementAt(1) as FunctionArgumentsTableRow;
+            Assert.Equal("logOnSuccess", tableRow.Name);
+            Assert.Equal("True", tableRow.Value);
+            Assert.Equal("", tableRow.Notes);
+
+            tableRow = table.BodyRows.ElementAt(2) as FunctionArgumentsTableRow;
+            Assert.Equal("log", tableRow.Name);
+            Assert.Equal("", tableRow.Value);
+            Assert.Equal("", tableRow.Notes);
+        }
+
+        [Fact]
+        public void FunctionInvocationPage_ToggleOutputButton()
+        {
+            FunctionInvocationPage page = Dashboard.GoToFunctionInvocationPage(FailedInvocation.Id);
+            JobOutputSection section = page.DetailsSection.OutputSection;
+
+            NgButton toggleOutput = section.ToggleOutputButton;
+            Assert.True(toggleOutput.IsUserAccesible);
+
+            Assert.Equal("Toggle Output", toggleOutput.Caption);
+            Assert.Equal("toggleConsole()", toggleOutput.ClickAction);
+
+            Link downloadLink = section.DownloadLogLink;
+            TextArea output = section.Output;
+
+            Assert.False(output.IsUserAccesible);
+            Assert.False(downloadLink.IsUserAccesible);
+
+            toggleOutput.Click();
+            Assert.True(output.IsUserAccesible);
+            Assert.True(downloadLink.IsUserAccesible);
+            Assert.Equal("download", downloadLink.Text);
+
+            toggleOutput.Click();
+            Assert.False(output.IsUserAccesible);
+            Assert.False(downloadLink.IsUserAccesible);
+        }
+
+        [Fact]
+        public void FunctionInvocationPage_EmptyOutput()
+        {
+            ValidateInvocationOutput(SuccessfulInvocationWithoutLog.Id, string.Empty);
+        }
+
+        [Fact]
+        public void FunctionInvocationPage_SuccessfulFunction_NonEmptyOutput()
+        {
+            ValidateInvocationOutput(SuccessfulInvocationWithLog.Id, "logOnSuccess is enabled");
+        }
+
+        [Fact]
+        public void FunctionInvocationPage_FailedFunction_NonEmptyOutput()
+        {
+            ValidateInvocationOutput(FailedInvocation.Id, "This function will always fail in this case");
+        }
+
+        private void ValidateInvocationOutput(string invocationId, string expectedOutput)
+        {
+            FunctionInvocationPage page = Dashboard.GoToFunctionInvocationPage(invocationId);
+            JobOutputSection section = page.DetailsSection.OutputSection;
+
+            NgButton toggleOutput = section.ToggleOutputButton;
+            section.ToggleOutputButton.Click();
+
+            TextArea output = section.Output;
+            output.WaitForDataToLoad();
+
+            string outputText = output.Text;
+            if (outputText != null && string.IsNullOrWhiteSpace(outputText))
+            {
+                outputText = string.Empty;
+            }
+            Assert.Equal(expectedOutput, outputText);
+
+            Link downloadLink = section.DownloadLogLink;
+            Assert.False(string.IsNullOrWhiteSpace(downloadLink.Href));
+
+            string fileOutput = Dashboard.Api.DownloadTextFrom(downloadLink.Href);
+            fileOutput = fileOutput.TrimEnd('\r', '\n');
+            Assert.Equal(expectedOutput, fileOutput);
         }
 
         private void ValidateInvocationsTableRows(Func<InvocationsTable> tableResolver)
@@ -215,19 +320,19 @@ namespace Dashboard.EndToEndTests
             Assert.Equal(3, invocationsRows.Count());
 
             InvocationsTableRow row = invocationsRows.ElementAt(0) as InvocationsTableRow;
-            Assert.Equal("SingleFunction.Function (True)", row.InvocationDisplayText);
+            Assert.Equal("SingleFunction.Function (True, False, )", row.InvocationDisplayText);
             Assert.Equal(JobStatus.Failed, row.Status);
             Assert.False(string.IsNullOrWhiteSpace(row.CompletionTime));
             Assert.False(string.IsNullOrWhiteSpace(row.RunningTime));
 
             row = invocationsRows.ElementAt(1) as InvocationsTableRow;
-            Assert.Equal("SingleFunction.Function (False)", row.InvocationDisplayText);
+            Assert.Equal("SingleFunction.Function (False, False, )", row.InvocationDisplayText);
             Assert.Equal(JobStatus.Success, row.Status);
             Assert.False(string.IsNullOrWhiteSpace(row.CompletionTime));
             Assert.False(string.IsNullOrWhiteSpace(row.RunningTime));
 
             row = invocationsRows.ElementAt(2) as InvocationsTableRow;
-            Assert.Equal("SingleFunction.Function (False)", row.InvocationDisplayText);
+            Assert.Equal("SingleFunction.Function (False, True, )", row.InvocationDisplayText);
             Assert.Equal(JobStatus.Success, row.Status);
             Assert.False(string.IsNullOrWhiteSpace(row.CompletionTime));
             Assert.False(string.IsNullOrWhiteSpace(row.RunningTime));

@@ -31,9 +31,21 @@ namespace Dashboard.EndToEndTests.DomAbstractions
 
         public async Task<int> IndexingQueueLengthAsync(int limit)
         {
-            HttpClient client = new HttpClient();
-            string response = await client.GetStringAsync(_baseAddress + IndexingQueueLengthApi + limit.ToString());
+            string response = await DownloadTextFromAsync(_baseAddress + IndexingQueueLengthApi + limit.ToString());
             return int.Parse(response);
+        }
+
+        public string DownloadTextFrom(string url)
+        {
+            return DownloadTextFromAsync(url).GetAwaiter().GetResult();
+        }
+
+        public async Task<string> DownloadTextFromAsync(string url)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                return await client.GetStringAsync(url);
+            }
         }
     }
 }

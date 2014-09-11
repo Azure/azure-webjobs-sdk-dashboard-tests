@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using Dashboard.EndToEndTests.HtmlAbstractions;
+using Dashboard.EndToEndTests.HtmlAbstractions.Angular;
 using OpenQA.Selenium;
 
 namespace Dashboard.EndToEndTests.DomAbstractions
@@ -74,6 +75,17 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             {
                 IWebElement tableElement = Waiters.WaitForElementToAppear(() => RawElement.FindElement(By.TagName(Tags.Table)));
                 return new FunctionArgumentsTable(tableElement);
+            }
+        }
+
+        public JobOutputSection OutputSection
+        {
+            get
+            {
+                const string selector = Tags.ConsoleOutput;
+                IWebElement sectionElement = Waiters.WaitForElementToAppear(() => RawElement.FindElement(By.TagName(selector)));
+
+                return new JobOutputSection(sectionElement);
             }
         }
     }

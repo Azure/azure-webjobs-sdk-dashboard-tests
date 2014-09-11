@@ -12,10 +12,7 @@ namespace Dashboard.EndToEndTests.DomAbstractions
 {
     public static class Waiters
     {
-        public static void WaitForAction(Func<bool> action)
-        {
-            WaitForAction(action, TimeSpan.FromSeconds(15));
-        }
+        private const string LoadingText = "Loading...";
 
         public static void WaitForAction(Func<bool> action, TimeSpan timeout)
         {
@@ -32,11 +29,6 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             }
 
             throw new TimeoutException("Operation failed");
-        }
-
-        public static T WaitForElementToAppear<T>(Func<T> actionToWait)
-        {
-            return WaitForElementToAppear(actionToWait, TimeSpan.FromSeconds(10));
         }
 
         public static T WaitForElementToAppear<T>(Func<T> actionToWait, TimeSpan timeout)
@@ -59,47 +51,73 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             throw new TimeoutException("Operation failed");
         }
 
-        public static void WaitForDataToLoad(this Table table)
+        public static void WaitForDataToLoad(this TextArea textArea, TimeSpan timeout)
         {
-            WaitForDataToLoad(table, TimeSpan.FromSeconds(15));
+            WaitForAction(
+                () => !string.Equals(LoadingText, textArea.Text),
+                timeout);
+
+            // Wait another second because it takes a while to render the actual text
+            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
         public static void WaitForDataToLoad(this Table table, TimeSpan timeout)
         {
             try
             {
-                DateTime startTime = DateTime.Now;
-
-                while ((DateTime.Now - startTime) <= timeout)
-                {
-                    IEnumerable<TableRow> rows = table.BodyRows;
-                    if (rows.Count() != 1)
+                WaitForAction(() =>
                     {
-                        return;
-                    }
+                        IEnumerable<TableRow> rows = table.BodyRows;
+                        if (rows.Count() != 1)
+                        {
+                            return true;
+                        }
 
-                    TableRow singleRow = rows.Single();
-                    IEnumerable<TableCell> cells = singleRow.Cells;
-                    if (cells.Count() != 1)
-                    {
-                        return;
-                    }
+                        TableRow singleRow = rows.Single();
+                        IEnumerable<TableCell> cells = singleRow.Cells;
+                        if (cells.Count() != 1)
+                        {
+                            return true;
+                        }
 
-                    TableCell singleCell = cells.Single();
-                    if (!string.Equals("Loading...", singleCell.RawElement.Text))
-                    {
-                        return;
-                    }
+                        TableCell singleCell = cells.Single();
+                        if (!string.Equals(LoadingText, singleCell.RawElement.Text))
+                        {
+                            return true;
+                        }
 
-                    Thread.Sleep(500);
-                }
-
-                throw new TimeoutException("Operation failed");
+                        return false;
+                    },
+                    timeout);
             }
             catch (StaleElementReferenceException)
             {
                 // The table is gone so we are done waiting
             }
         }
+
+        #region Without the timeout argument
+
+        public static void WaitForDataToLoad(this Table table)
+        {
+            WaitForDataToLoad(table, TimeSpan.FromSeconds(15));
+        }
+
+        public static void WaitForDataToLoad(this TextArea textArea)
+        {
+            WaitForDataToLoad(textArea, TimeSpan.FromSeconds(15));
+        }
+
+        public static void WaitForAction(Func<bool> action)
+        {
+            WaitForAction(action, TimeSpan.FromSeconds(15));
+        }
+
+        public static T WaitForElementToAppear<T>(Func<T> actionToWait)
+        {
+            return WaitForElementToAppear(actionToWait, TimeSpan.FromSeconds(10));
+        }
+
+        #endregion
     }
 }

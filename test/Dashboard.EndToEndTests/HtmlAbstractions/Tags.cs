@@ -7,6 +7,7 @@ namespace Dashboard.EndToEndTests.HtmlAbstractions
     {
         public const string A = "a";
         public const string B = "b";
+        public const string Button = "button";
         public const string Code = "code";
         public const string Div = "div";
         public const string H3 = "h3";
@@ -18,11 +19,14 @@ namespace Dashboard.EndToEndTests.HtmlAbstractions
         public const string Span = "span";
         public const string TBody = "tbody";
         public const string Td = "td";
+        public const string TextArea = "textarea";
         public const string Th = "th";
         public const string THead = "thead";
         public const string Tr = "tr";
         public const string Ul = "ul";
 
         public const string NgInclude = "ng-include";
+
+        public const string ConsoleOutput = "console-output";
     }
 }

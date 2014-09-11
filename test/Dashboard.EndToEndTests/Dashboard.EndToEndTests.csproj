@@ -60,6 +60,7 @@
     <Compile Include="DomAbstractions\Pages\FunctionsPage.cs" />
     <Compile Include="DomAbstractions\Pages\RunFunctionPage.cs" />
     <Compile Include="DomAbstractions\Pages\SearchBlobPage.cs" />
+    <Compile Include="DomAbstractions\Sections\JobOutputSection.cs" />
     <Compile Include="DomAbstractions\Sections\DefinitionSection.cs" />
     <Compile Include="DomAbstractions\Sections\FunctionsSection.cs" />
     <Compile Include="DomAbstractions\Sections\InvocationDetailsSection.cs" />
@@ -77,6 +78,8 @@
     <Compile Include="Functions.cs" />
     <Compile Include="FunctionWithInvocationsTests.cs" />
     <Compile Include="FunctionWithoutInvocationsTests.cs" />
+    <Compile Include="HtmlAbstractions\Angular\NgButton.cs" />
+    <Compile Include="HtmlAbstractions\Button.cs" />
     <Compile Include="HtmlAbstractions\Header.cs" />
     <Compile Include="DomAbstractions\Pages\JobsPage.cs" />
     <Compile Include="HtmlAbstractions\Link.cs" />
@@ -88,6 +91,7 @@
     <Compile Include="HtmlAbstractions\TableCell.cs" />
     <Compile Include="HtmlAbstractions\TableRow.cs" />
     <Compile Include="HtmlAbstractions\Tags.cs" />
+    <Compile Include="HtmlAbstractions\TextArea.cs" />
     <Compile Include="Infrastructure\DashboardData\Argument.cs" />
     <Compile Include="Infrastructure\DashboardData\FunctionInfo.cs" />
     <Compile Include="Infrastructure\DashboardData\HostInfo.cs" />
