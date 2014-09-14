@@ -19,13 +19,13 @@ namespace Dashboard.EndToEndTests.Infrastructure
     public class WebJobsStorageAccount
     {
         public const string DashboardContainerName = "azure-jobs-dashboard";
-        public const string HostsContainerName = "azure-jobs-hosts";
+        public const string HostsContainerName = "azure-webjobs-hosts";
         public const string HostOutputContainerName = "azure-jobs-host-output";
         public const string OldHostContainerName = "azure-jobs-dashboard-hosts";
 
         private const string FunctionsByFunctionIndexPrefix = "functions/recent/by-function/";
         private const string FunctionsInstancesIndexPrefix = "functions/instances/";
-        private const string HostsIndexPrefix = "hosts/azure-jobs-host-";
+        private const string HostsIndexPrefix = "hosts/azure-webjobs-host-";
         private const string HostIdsIndexPrefix = "ids";
 
         private readonly string _connectionString;
