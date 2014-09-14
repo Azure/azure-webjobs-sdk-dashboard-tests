@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using Dashboard.EndToEndTests.Infrastructure.DashboardData;
 using Microsoft.WindowsAzure.Storage;
@@ -18,7 +17,7 @@ namespace Dashboard.EndToEndTests.Infrastructure
 {
     public class WebJobsStorageAccount
     {
-        public const string DashboardContainerName = "azure-jobs-dashboard";
+        public const string DashboardContainerName = "azure-webjobs-dashboard";
         public const string HostsContainerName = "azure-webjobs-hosts";
         public const string HostOutputContainerName = "azure-jobs-host-output";
         public const string OldHostContainerName = "azure-jobs-dashboard-hosts";

@@ -4,6 +4,7 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Dashboard.EndToEndTests.DomAbstractions
 {
@@ -11,6 +12,10 @@ namespace Dashboard.EndToEndTests.DomAbstractions
     {
         private const string DiagnosticsApi = "/api/diagnostics";
         private const string IndexingQueueLengthApi = DiagnosticsApi + "/indexingQueueLength?limit=";
+
+        private const string LogApi = "/api/log";
+        private const string DownloadBlobApi = LogApi + "/blob?path=";
+
 
         private readonly string _baseAddress;
 
@@ -22,6 +27,16 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             }
 
             _baseAddress = baseAddress;
+        }
+
+        public string ConstructDownloadBlobUrl(string blobPath)
+        {
+            if (String.IsNullOrWhiteSpace(blobPath))
+            {
+                throw new ArgumentNullException("blobPath");
+            }
+
+            return _baseAddress + DownloadBlobApi + HttpUtility.UrlEncode(blobPath);
         }
 
         public int IndexingQueueLength(int limit)

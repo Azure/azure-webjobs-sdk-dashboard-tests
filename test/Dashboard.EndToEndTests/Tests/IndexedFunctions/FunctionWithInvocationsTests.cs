@@ -18,8 +18,6 @@ namespace Dashboard.EndToEndTests
 {
     public class FunctionWithInvocationsTestsFixture : DashboardTestFixture
     {
-        public static readonly MethodInfo FunctionInfo = typeof(SingleFunction).GetMethod("Function");
-
         public FunctionWithInvocationsTestsFixture()
             : base(cleanStorageAccount: true)
         {
@@ -29,11 +27,11 @@ namespace Dashboard.EndToEndTests
             };
 
             JobHost host = new JobHost(hostConfiguration);
-            host.Call(FunctionInfo, new { fail = false, logOnSuccess = true });
-            host.Call(FunctionInfo, new { fail = false, logOnSuccess = false });
+            host.Call(SingleFunction.FunctionMethodInfo, new { fail = false, logOnSuccess = true });
+            host.Call(SingleFunction.FunctionMethodInfo, new { fail = false, logOnSuccess = false });
             try
             {
-                host.Call(FunctionInfo, new { fail = true, logOnSuccess = false });
+                host.Call(SingleFunction.FunctionMethodInfo, new { fail = true, logOnSuccess = false });
             }
             catch (InvalidOperationException)
             {
@@ -60,8 +58,8 @@ namespace Dashboard.EndToEndTests
             {
                 Waiters.WaitForAction(() => Dashboard.Api.IndexingQueueLength(limit: 1) == 0);
 
-                data.FunctionId = data.StorageAccount.MethodInfoToFunctionDefinitionId(FunctionWithInvocationsTestsFixture.FunctionInfo);
-                data.Invocations = data.StorageAccount.MethodInfoToInvocations(FunctionWithInvocationsTestsFixture.FunctionInfo);
+                data.FunctionId = data.StorageAccount.MethodInfoToFunctionDefinitionId(SingleFunction.FunctionMethodInfo);
+                data.Invocations = data.StorageAccount.MethodInfoToInvocations(SingleFunction.FunctionMethodInfo);
             }
 
             _functionDefinitionId = data.FunctionId;
@@ -74,7 +72,7 @@ namespace Dashboard.EndToEndTests
             get
             {
                 return _storageAccount
-                    .MethodInfoToInvocations(FunctionWithInvocationsTestsFixture.FunctionInfo)
+                    .MethodInfoToInvocations(SingleFunction.FunctionMethodInfo)
                     .Single(invocation => !invocation.Succeeded);
             }
         }
@@ -84,7 +82,7 @@ namespace Dashboard.EndToEndTests
             get
             {
                 return _storageAccount
-                    .MethodInfoToInvocations(FunctionWithInvocationsTestsFixture.FunctionInfo)
+                    .MethodInfoToInvocations(SingleFunction.FunctionMethodInfo)
                     .Single(invocation => invocation.Succeeded && invocation.Arguments["logOnSuccess"].Value == "True");
             }
         }
@@ -94,7 +92,7 @@ namespace Dashboard.EndToEndTests
             get
             {
                 return _storageAccount
-                    .MethodInfoToInvocations(FunctionWithInvocationsTestsFixture.FunctionInfo)
+                    .MethodInfoToInvocations(SingleFunction.FunctionMethodInfo)
                     .Single(invocation => invocation.Succeeded && invocation.Arguments["logOnSuccess"].Value == "False");
             }
         }
@@ -190,17 +188,17 @@ namespace Dashboard.EndToEndTests
 
             FunctionArgumentsTableRow tableRow = table.BodyRows.ElementAt(0) as FunctionArgumentsTableRow;
             Assert.Equal("fail", tableRow.Name);
-            Assert.Equal("True", tableRow.Value);
+            Assert.Equal("True", tableRow.Value.TextValue);
             Assert.Equal("", tableRow.Notes);
 
             tableRow = table.BodyRows.ElementAt(1) as FunctionArgumentsTableRow;
             Assert.Equal("logOnSuccess", tableRow.Name);
-            Assert.Equal("False", tableRow.Value);
+            Assert.Equal("False", tableRow.Value.TextValue);
             Assert.Equal("", tableRow.Notes);
 
             tableRow = table.BodyRows.ElementAt(2) as FunctionArgumentsTableRow;
             Assert.Equal("log", tableRow.Name);
-            Assert.Equal("", tableRow.Value);
+            Assert.Equal("", tableRow.Value.TextValue);
             Assert.Equal("", tableRow.Notes);
         }
 
@@ -226,17 +224,17 @@ namespace Dashboard.EndToEndTests
 
             FunctionArgumentsTableRow tableRow = table.BodyRows.ElementAt(0) as FunctionArgumentsTableRow;
             Assert.Equal("fail", tableRow.Name);
-            Assert.Equal("False", tableRow.Value);
+            Assert.Equal("False", tableRow.Value.TextValue);
             Assert.Equal("", tableRow.Notes);
 
             tableRow = table.BodyRows.ElementAt(1) as FunctionArgumentsTableRow;
             Assert.Equal("logOnSuccess", tableRow.Name);
-            Assert.Equal("True", tableRow.Value);
+            Assert.Equal("True", tableRow.Value.TextValue);
             Assert.Equal("", tableRow.Notes);
 
             tableRow = table.BodyRows.ElementAt(2) as FunctionArgumentsTableRow;
             Assert.Equal("log", tableRow.Name);
-            Assert.Equal("", tableRow.Value);
+            Assert.Equal("", tableRow.Value.TextValue);
             Assert.Equal("", tableRow.Notes);
         }
 

@@ -29,13 +29,11 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             }
         }
 
-        public string Value
+        public FunctionArgumentsTableRowValueCell Value
         {
             get
             {
-                return this[1].RawElement
-                    .FindElement(By.TagName(Tags.Span))
-                    .Text;
+                return new FunctionArgumentsTableRowValueCell(this[1].RawElement);
             }
         }
 
