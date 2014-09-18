@@ -84,7 +84,7 @@ namespace Dashboard.EndToEndTests
                 {
                     AssertReadDataDisplay(rows[0].Notes, expectedDataSize: "16");
                     AssertReadDataDisplay(rows[1].Notes, expectedDataSize: "13");
-                    AssertWroteDataDisplay(rows[2].Notes, expectedDataSize: "32");
+                    AssertWroteDataDisplay(rows[2].Notes, expectedDataSize: "29");
                 });
         }
 

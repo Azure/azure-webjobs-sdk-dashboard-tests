@@ -17,7 +17,7 @@ namespace Dashboard.EndToEndTests.DomAbstractions
         {
             get
             {
-                IWebElement displayHeader = RawElement.FindElement(By.TagName(Tags.H3));
+                IWebElement displayHeader = Waiters.WaitForElementToAppear(() => RawElement.FindElement(By.TagName(Tags.H3)));
                 return new Header(displayHeader);
             }
         }
@@ -27,7 +27,7 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             get
             {
                 const string selector = "p>a.btn";
-                IWebElement linkElement = RawElement.FindElement(By.CssSelector(selector));
+                IWebElement linkElement = Waiters.WaitForElementToAppear(() => RawElement.FindElement(By.CssSelector(selector)));
                 return new Link(linkElement);
             }
         }
@@ -36,7 +36,7 @@ namespace Dashboard.EndToEndTests.DomAbstractions
         {
             get
             {
-                IWebElement tableElement = RawElement.FindElement(By.TagName(Tags.Table));
+                IWebElement tableElement = Waiters.WaitForElementToAppear(() => RawElement.FindElement(By.TagName(Tags.Table)));
                 return new InvocationsTable(tableElement);
             }
         }

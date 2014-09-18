@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dashboard.EndToEndTests.DomAbstractions;
 using OpenQA.Selenium;
 
 namespace Dashboard.EndToEndTests.HtmlAbstractions
@@ -35,7 +36,8 @@ namespace Dashboard.EndToEndTests.HtmlAbstractions
             {
                 const string selector = ".//" + Tags.TBody + "/" + Tags.Tr;
 
-                return RawElement.FindElements(By.XPath(selector)).Select(tr => MapRow(tr));
+                return  Waiters.WaitForElementToAppear(() => RawElement.FindElements(By.XPath(selector)))
+                    .Select(tr => MapRow(tr));
             }
         }
 

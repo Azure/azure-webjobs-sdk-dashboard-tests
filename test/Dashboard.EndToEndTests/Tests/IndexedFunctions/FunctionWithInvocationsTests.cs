@@ -269,22 +269,27 @@ namespace Dashboard.EndToEndTests
         [Fact]
         public void FunctionInvocationPage_EmptyOutput()
         {
-            ValidateInvocationOutput(SuccessfulInvocationWithoutLog.Id, string.Empty);
+            ValidateInvocationOutput(
+                SuccessfulInvocationWithoutLog.Id, 
+                output => Assert.True(string.IsNullOrWhiteSpace(output)));
         }
 
         [Fact]
         public void FunctionInvocationPage_SuccessfulFunction_NonEmptyOutput()
         {
-            ValidateInvocationOutput(SuccessfulInvocationWithLog.Id, "logOnSuccess is enabled");
+            ValidateInvocationOutput(
+                SuccessfulInvocationWithLog.Id, 
+                output => Assert.Equal("logOnSuccess is enabled", output));
         }
 
         [Fact]
         public void FunctionInvocationPage_FailedFunction_NonEmptyOutput()
         {
-            ValidateInvocationOutput(FailedInvocation.Id, "This function will always fail in this case");
+            ValidateInvocationOutput(FailedInvocation.Id, 
+                output => Assert.True(output.StartsWith("This function will always fail in this case")));
         }
 
-        private void ValidateInvocationOutput(string invocationId, string expectedOutput)
+        private void ValidateInvocationOutput(string invocationId, Action<string> outputTextValidator)
         {
             FunctionInvocationPage page = Dashboard.GoToFunctionInvocationPage(invocationId);
             JobOutputSection section = page.DetailsSection.OutputSection;
@@ -295,19 +300,13 @@ namespace Dashboard.EndToEndTests
             TextArea output = section.Output;
             output.WaitForDataToLoad();
 
-            string outputText = output.Text;
-            if (outputText != null && string.IsNullOrWhiteSpace(outputText))
-            {
-                outputText = string.Empty;
-            }
-            Assert.Equal(expectedOutput, outputText);
+            outputTextValidator(output.Text.Trim());
 
             Link downloadLink = section.DownloadLogLink;
             Assert.False(string.IsNullOrWhiteSpace(downloadLink.Href));
 
             string fileOutput = Dashboard.Api.DownloadTextFrom(downloadLink.Href);
-            fileOutput = fileOutput.TrimEnd('\r', '\n');
-            Assert.Equal(expectedOutput, fileOutput);
+            outputTextValidator(fileOutput.Trim());
         }
 
         private void ValidateInvocationsTableRows(Func<InvocationsTable> tableResolver)

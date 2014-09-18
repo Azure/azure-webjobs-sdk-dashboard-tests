@@ -19,7 +19,7 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             get
             {
                 const string selector = Tags.P + ">" + Tags.A + ".btn";
-                IWebElement linkElement = RawElement.FindElement(By.CssSelector(selector));
+                IWebElement linkElement = Waiters.WaitForElementToAppear(() => RawElement.FindElement(By.CssSelector(selector)));
                 return new Link(linkElement);
             }
         }
