@@ -117,27 +117,7 @@ namespace Dashboard.EndToEndTests.Infrastructure
 
             string methodName = methodInfo.DeclaringType.FullName + "." + methodInfo.Name;
 
-            if (!_dashboardContainer.Exists())
-            {
-                return null;
-            }
-
-            CloudBlockBlob hostBlob = _dashboardContainer.GetBlockBlobReference(HostsIndexPrefix + hostId);
-            if (!hostBlob.Exists())
-            {
-                return null;
-            }
-
-            string blobContent = hostBlob.DownloadText();
-
-            HostInfo hostInfo = JsonConvert.DeserializeObject<HostInfo>(blobContent);
-            FunctionInfo functionInfo = hostInfo.Functions.SingleOrDefault(f => methodName == f.FullName);
-            if (functionInfo == null)
-            {
-                return null;
-            }
-
-            return functionInfo.Id;
+            return hostId + "_" + methodName;
         }
 
         public string AssemblyToHostId(Assembly assembly)

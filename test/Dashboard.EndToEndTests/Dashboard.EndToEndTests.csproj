@@ -98,8 +98,6 @@
     <Compile Include="HtmlAbstractions\Tags.cs" />
     <Compile Include="HtmlAbstractions\TextArea.cs" />
     <Compile Include="Infrastructure\DashboardData\Argument.cs" />
-    <Compile Include="Infrastructure\DashboardData\FunctionInfo.cs" />
-    <Compile Include="Infrastructure\DashboardData\HostInfo.cs" />
     <Compile Include="Infrastructure\DashboardData\InvocationDetails.cs" />
     <Compile Include="Infrastructure\DashboardServer.cs" />
     <Compile Include="Infrastructure\StorageExtensions.cs" />
@@ -169,20 +167,17 @@
     <Reference Include="TestEasy.Client">
       <HintPath>..\..\packages\TestEasy.Client.1.0.60\lib\TestEasy.Client.dll</HintPath>
     </Reference>
-    <Reference Include="TestEasy.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\TestEasy.Core.1.0.90\lib\TestEasy.Core.dll</HintPath>
+    <Reference Include="TestEasy.Core">
+      <HintPath>..\..\packages\TestEasy.Core.1.0.111\lib\TestEasy.Core.dll</HintPath>
     </Reference>
     <Reference Include="TestEasy.Server">
       <HintPath>..\..\packages\TestEasy.Server.1.0.60\lib\TestEasy.Server.dll</HintPath>
     </Reference>
-    <Reference Include="TestEasy.WebBrowser, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\TestEasy.WebBrowser.1.0.90\lib\TestEasy.WebBrowser.dll</HintPath>
+    <Reference Include="TestEasy.WebBrowser">
+      <HintPath>..\..\packages\TestEasy.WebBrowser.1.0.111\lib\TestEasy.WebBrowser.dll</HintPath>
     </Reference>
-    <Reference Include="TestEasy.WebServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\TestEasy.WebServer.1.0.90\lib\TestEasy.WebServer.dll</HintPath>
+    <Reference Include="TestEasy.WebServer">
+      <HintPath>..\..\packages\TestEasy.WebServer.1.0.111\lib\TestEasy.WebServer.dll</HintPath>
     </Reference>
     <Reference Include="WebDriver">
       <HintPath>..\..\packages\Selenium.WebDriver.2.42.0\lib\net40\WebDriver.dll</HintPath>
