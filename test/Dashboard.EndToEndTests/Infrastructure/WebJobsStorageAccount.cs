@@ -24,7 +24,7 @@ namespace Dashboard.EndToEndTests.Infrastructure
 
         private const string FunctionsByFunctionIndexPrefix = "functions/recent/by-function/";
         private const string FunctionsInstancesIndexPrefix = "functions/instances/";
-        private const string HostsIndexPrefix = "hosts/azure-webjobs-host-";
+        private const string HostIdPrefix = "azure-webjobs-host-";
         private const string HostIdsIndexPrefix = "ids";
 
         private readonly string _connectionString;
@@ -117,7 +117,7 @@ namespace Dashboard.EndToEndTests.Infrastructure
 
             string methodName = methodInfo.DeclaringType.FullName + "." + methodInfo.Name;
 
-            return hostId + "_" + methodName;
+            return HostIdPrefix + hostId + "_" + methodName;
         }
 
         public string AssemblyToHostId(Assembly assembly)

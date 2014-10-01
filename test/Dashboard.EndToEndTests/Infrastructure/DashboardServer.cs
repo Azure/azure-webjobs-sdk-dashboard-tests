@@ -6,7 +6,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Web.Administration;
 using TestEasy.Core.Configuration;
-using TestEasy.Server;
+using TestEasy.WebServer;
 
 namespace Dashboard.EndToEndTests.Infrastructure
 {
@@ -31,7 +31,7 @@ namespace Dashboard.EndToEndTests.Infrastructure
                 throw new ArgumentNullException(deployPath);
             }
 
-            _server = new WebServerIisExpress();
+            _server = WebServer.Create(WebServerType.IISExpress);
             _application = _server.CreateWebApplication(ApplicationName);
             _application.Deploy(deployPath);
 
