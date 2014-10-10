@@ -13,9 +13,7 @@ namespace Dashboard.EndToEndTests.Infrastructure
     public class DashboardServer : IDisposable
     {
         private const string ApplicationName = "WebJobsDashboard";
-        private const string ConnectionStringFormat = ".*<add name=\"AzureWebJobsDashboard\" connectionString=\"(?<cs>[^\"]*)\" />.*";
-
-        private static readonly Regex _connectionStringRegex = new Regex(ConnectionStringFormat, RegexOptions.Compiled); 
+        private const string ConnectionStringFormat = "<add name=\"AzureWebJobsDashboard\" connectionString=\"(?<cs>[^\"]*)\" />"; 
 
         private readonly WebServer _server;
         private readonly Application _application;
@@ -54,20 +52,22 @@ namespace Dashboard.EndToEndTests.Infrastructure
 
             GuardNotDisposed();
 
-            if (connectionString == null)
-            {
-                connectionString = string.Empty;
-            }
-
             string webConfigFileContent = File.ReadAllText(_webConfigFilePath);
 
-            webConfigFileContent = _connectionStringRegex.Replace(webConfigFileContent, m =>
+            if (connectionString == null)
             {
-                string capture = m.Value;
-                capture = capture.Remove(m.Groups[connectionStringGroupName].Index - m.Index, m.Groups[connectionStringGroupName].Length);
-                capture = capture.Insert(m.Groups[connectionStringGroupName].Index - m.Index, connectionString);
-                return capture;
-            });
+                webConfigFileContent = Regex.Replace(webConfigFileContent, ConnectionStringFormat, String.Empty);
+            }
+            else
+            {
+                webConfigFileContent = Regex.Replace(webConfigFileContent, ConnectionStringFormat, m =>
+                {
+                    string capture = m.Value;
+                    capture = capture.Remove(m.Groups[connectionStringGroupName].Index - m.Index, m.Groups[connectionStringGroupName].Length);
+                    capture = capture.Insert(m.Groups[connectionStringGroupName].Index - m.Index, connectionString);
+                    return capture;
+                });
+            }
 
             File.WriteAllText(_webConfigFilePath, webConfigFileContent);
         }

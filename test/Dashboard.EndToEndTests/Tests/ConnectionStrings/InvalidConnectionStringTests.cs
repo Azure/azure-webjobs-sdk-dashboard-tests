@@ -21,13 +21,21 @@ namespace Dashboard.EndToEndTests
     public class InvalidConnectionStringTests : DashboardTestClass<InvalidConnectionStringTestsFixture>
     {
         [Fact]
-        public void FunctionsPage_Warning()
+        public void FunctionsPage_InaccessibleError()
         {
             FunctionsPage page = Dashboard.GoToFunctionsPage();
 
             BadConnectionStringNotification notification = page.ErrorsNotificationSection.BadConnectionStringNotification;
             Assert.True(notification.IsUserAccesible);
-            Assert.Equal("AzureWebJobsDashboard", notification.ConnectionStringName);
+            Assert.Equal("The configuration is not properly set for the Microsoft Azure WebJobs Dashboard. " +
+                "Failed to connect with the xxxxxxxxxx storage account using credentials provided in the connection " + 
+                "string.\r\nIn your Microsoft Azure Website configuration you must set a connection string named " + 
+                "AzureWebJobsDashboard by using the following format " + 
+                "DefaultEndpointsProtocol=https;AccountName=NAME;AccountKey=KEY pointing to the Microsoft Azure " + 
+                "Storage account where the Microsoft Azure WebJobs Runtime logs are stored.\r\n\r\nPlease visit the " + 
+                "article about configuring connection strings for more information on how you can configure " + 
+                "connection strings in your Microsoft Azure Website.", 
+                notification.ErrorMessage);
             Assert.Equal("http://go.microsoft.com/fwlink/?LinkID=320957", notification.HelpUrl.Href);
         }
 

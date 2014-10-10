@@ -23,7 +23,7 @@ namespace Dashboard.EndToEndTests.DomAbstractions
         {
             get
             {
-                return RawElement.FindElement(By.TagName(Tags.Span)).Text;
+                return RawElement.Text;
             }
         }
 
