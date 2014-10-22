@@ -23,7 +23,7 @@ namespace Dashboard.EndToEndTests
 
         private const string DataMatcherPattern = "(?<" + DataSizeKey + ">\\d+) (?<" + DataUnitKey + ">\\w+)";
         private const string PercentMatcherPattern = "[(](?<" + PercentKey + ">\\d+[.]\\d+)% of total[)]";
-        private const string TimeMatcherPattern = "[(]about (?<" + TimeKey + ">\\d+) (?<" + TimeUnitKey + ">\\w+) spent on I/O[)]";
+        private const string TimeMatcherPattern = "About (?<" + TimeKey + ">\\d+) (?<" + TimeUnitKey + ">\\w+) spent on I/O.";
 
         private static readonly string _blobReadNotesPattern = string.Format(
             "(?n)^Read {0} {1}[.]( {2})?$",
