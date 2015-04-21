@@ -38,23 +38,13 @@ namespace Dashboard.EndToEndTests
             JobsPage page = Dashboard.GoToJobsPage();
             
             // Verify navbar buttons
-            Link[] links = page.Navbar.NavLinks.ToArray();
-            Assert.Equal(3, links.Length);
+            IEnumerable<Link> links = page.Navbar.NavLinks;
+            Assert.Equal(1, links.Count());
 
-            Link functionLink = links[0];
+            Link functionLink = links.Single();
             Assert.True(functionLink.IsUserAccesible);
             Assert.Equal("Functions", functionLink.Text);
             Assert.Equal(Dashboard.BuildFullUrl(FunctionsPage.RelativePath), functionLink.Href);
-
-            Link blobSearchLink = links[1];
-            Assert.True(blobSearchLink.IsUserAccesible);
-            Assert.Equal("Search Blobs", blobSearchLink.Text);
-            Assert.Equal(Dashboard.BuildFullUrl(SearchBlobPage.RelativePath), blobSearchLink.Href);
-
-            Link aboutLink = links[2];
-            Assert.True(aboutLink.IsUserAccesible);
-            Assert.Equal("About", aboutLink.Text);
-            Assert.Equal(Dashboard.BuildFullUrl("#/about"), aboutLink.Href);
         }
 
         [Fact]
