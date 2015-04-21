@@ -38,13 +38,23 @@ namespace Dashboard.EndToEndTests
             JobsPage page = Dashboard.GoToJobsPage();
             
             // Verify navbar buttons
-            IEnumerable<Link> links = page.Navbar.NavLinks;
-            Assert.Equal(1, links.Count());
+            Link[] links = page.Navbar.NavLinks.ToArray();
+            Assert.Equal(3, links.Length);
 
-            Link functionLink = links.First();
+            Link functionLink = links[0];
             Assert.True(functionLink.IsUserAccesible);
             Assert.Equal("Functions", functionLink.Text);
             Assert.Equal(Dashboard.BuildFullUrl(FunctionsPage.RelativePath), functionLink.Href);
+
+            Link blobSearchLink = links[1];
+            Assert.True(blobSearchLink.IsUserAccesible);
+            Assert.Equal("Search Blobs", blobSearchLink.Text);
+            Assert.Equal(Dashboard.BuildFullUrl(SearchBlobPage.RelativePath), blobSearchLink.Href);
+
+            Link aboutLink = links[2];
+            Assert.True(aboutLink.IsUserAccesible);
+            Assert.Equal("About", aboutLink.Text);
+            Assert.Equal(Dashboard.BuildFullUrl("#/about"), aboutLink.Href);
         }
 
         [Fact]
@@ -67,16 +77,6 @@ namespace Dashboard.EndToEndTests
 
             Assert.Equal(3, noJobsCell.ColSpan);
             Assert.Equal("There are no WebJobs in this website. See this article about using WebJobs.", noJobsCell.RawElement.Text);
-        }
-
-        [Fact]
-        public void FunctionsPage_SdkTeaser()
-        {
-            FunctionsPage page = Dashboard.GoToFunctionsPage();
-
-            SdkTeaserNotification sdkTeaserNotification = page.SdkTeaserNotificationSection.SdkTeaserNotification;
-            Assert.True(sdkTeaserNotification.IsUserAccesible);
-            Assert.Equal("http://go.microsoft.com/fwlink/?LinkID=320954", sdkTeaserNotification.MoreInfoUrl.Href);
         }
     }
 }

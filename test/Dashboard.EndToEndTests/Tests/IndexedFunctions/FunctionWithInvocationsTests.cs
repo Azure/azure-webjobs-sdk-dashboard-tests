@@ -11,7 +11,6 @@ using Dashboard.EndToEndTests.HtmlAbstractions.Angular;
 using Dashboard.EndToEndTests.Infrastructure;
 using Dashboard.EndToEndTests.Infrastructure.DashboardData;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host.TestCommon;
 using Xunit;
 
 namespace Dashboard.EndToEndTests
@@ -23,7 +22,7 @@ namespace Dashboard.EndToEndTests
         {
             JobHostConfiguration hostConfiguration = new JobHostConfiguration(StorageAccount.ConnectionString)
             {
-                TypeLocator = new SimpleTypeLocator(typeof(SingleFunction))
+                TypeLocator = new ExplicitTypeLocator(typeof(SingleFunction))
             };
 
             JobHost host = new JobHost(hostConfiguration);
