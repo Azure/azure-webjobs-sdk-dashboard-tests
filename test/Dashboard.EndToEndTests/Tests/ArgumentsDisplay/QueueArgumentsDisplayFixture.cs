@@ -4,7 +4,6 @@
 using System.Reflection;
 using System.Threading;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host.TestCommon;
 using Microsoft.WindowsAzure.Storage.Queue;
 
 namespace Dashboard.EndToEndTests
@@ -43,7 +42,7 @@ namespace Dashboard.EndToEndTests
 
             JobHostConfiguration hostConfiguration = new JobHostConfiguration(StorageAccount.ConnectionString)
             {
-                TypeLocator = new SimpleTypeLocator(
+                TypeLocator = new ExplicitTypeLocator(
                     typeof(QueueArgumentsDisplayFunctions),
                     typeof(DoneNotificationFunction))
             };
