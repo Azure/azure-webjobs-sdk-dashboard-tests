@@ -68,5 +68,15 @@ namespace Dashboard.EndToEndTests
             Assert.Equal(3, noJobsCell.ColSpan);
             Assert.Equal("There are no WebJobs in this website. See this article about using WebJobs.", noJobsCell.RawElement.Text);
         }
+
+        [Fact]
+        public void FunctionsPage_SdkTeaser()
+        {
+            FunctionsPage page = Dashboard.GoToFunctionsPage();
+
+            SdkTeaserNotification sdkTeaserNotification = page.SdkTeaserNotificationSection.SdkTeaserNotification;
+            Assert.True(sdkTeaserNotification.IsUserAccesible);
+            Assert.Equal("http://go.microsoft.com/fwlink/?LinkID=320954", sdkTeaserNotification.MoreInfoUrl.Href);
+        }
     }
 }
