@@ -14,10 +14,10 @@ namespace Dashboard.EndToEndTests
     {
         private WebJobsStorageAccount _storageAccount;
 
-        public override void SetFixture(DashboardTestFixture data)
+        public CleanStorageAccountTests(DashboardTestFixture fixture)
+            : base(fixture)
         {
-            base.SetFixture(data);
-            _storageAccount = data.StorageAccount;
+            _storageAccount = fixture.StorageAccount;
         }
 
         [Fact]

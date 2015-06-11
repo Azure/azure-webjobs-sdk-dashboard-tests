@@ -48,22 +48,20 @@ namespace Dashboard.EndToEndTests
         private WebJobsStorageAccount _storageAccount;
         private string _functionDefinitionId;
         private IEnumerable<InvocationDetails> _invocations;
-       
-        public override void SetFixture(FunctionWithInvocationsTestsFixture data)
-        {
-            base.SetFixture(data);
 
-            if (data.FunctionId == null)
+        public FunctionWithInvocationsTests(FunctionWithInvocationsTestsFixture fixture) : base(fixture)
+        {
+            if (fixture.FunctionId == null)
             {
                 Waiters.WaitForAction(() => Dashboard.Api.IndexingQueueLength(limit: 1) == 0);
 
-                data.FunctionId = data.StorageAccount.MethodInfoToFunctionDefinitionId(SingleFunction.FunctionMethodInfo);
-                data.Invocations = data.StorageAccount.MethodInfoToInvocations(SingleFunction.FunctionMethodInfo);
+                fixture.FunctionId = fixture.StorageAccount.MethodInfoToFunctionDefinitionId(SingleFunction.FunctionMethodInfo);
+                fixture.Invocations = fixture.StorageAccount.MethodInfoToInvocations(SingleFunction.FunctionMethodInfo);
             }
 
-            _functionDefinitionId = data.FunctionId;
-            _storageAccount = data.StorageAccount;
-            _invocations = data.Invocations;
+            _functionDefinitionId = fixture.FunctionId;
+            _storageAccount = fixture.StorageAccount;
+            _invocations = fixture.Invocations;
         }
 
         private InvocationDetails FailedInvocation

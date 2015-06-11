@@ -80,10 +80,17 @@ namespace Dashboard.EndToEndTests
             if (!_isDisposed)
             {
                 _isDisposed = true;
-                _server.Dispose();
 
-                _dashboard.Dispose();
-                _dashboard = null;
+                if (_server != null)
+                {
+                    _server.Dispose();
+                }
+                
+                if (_dashboard != null)
+                {
+                    _dashboard.Dispose();
+                    _dashboard = null;
+                }
             }
         }
 

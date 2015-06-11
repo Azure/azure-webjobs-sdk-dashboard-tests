@@ -35,19 +35,17 @@ namespace Dashboard.EndToEndTests
     {
         private string _functionDefinitionId;
 
-        public override void SetFixture(FunctionWithoutInvocationsTestsFixture data)
+        public FunctionWithoutInvocationsTests(FunctionWithoutInvocationsTestsFixture fixture) : base (fixture)
         {
-            base.SetFixture(data);
-
-            if (data.FunctionId == null)
+            if (fixture.FunctionId == null)
             {
                 Waiters.WaitForAction(() => Dashboard.Api.IndexingQueueLength(limit: 1) == 0);
 
                 MethodInfo functionInfo = typeof(SingleFunction).GetMethod("Function");
-                data.FunctionId = data.StorageAccount.MethodInfoToFunctionDefinitionId(functionInfo);
+                fixture.FunctionId = fixture.StorageAccount.MethodInfoToFunctionDefinitionId(functionInfo);
             }
 
-            _functionDefinitionId = data.FunctionId;
+            _functionDefinitionId = fixture.FunctionId;
         }
 
         [Fact]

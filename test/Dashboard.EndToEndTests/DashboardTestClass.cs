@@ -6,14 +6,14 @@ using Xunit;
 
 namespace Dashboard.EndToEndTests
 {
-    public class DashboardTestClass<T> : IUseFixture<T>
+    public class DashboardTestClass<T> : IClassFixture<T>
         where T : DashboardTestFixture, new ()
     {
         protected WebJobsDashboard Dashboard { get; private set; }
 
-        public virtual void SetFixture(T data)
+        public DashboardTestClass(T fixture)
         {
-            Dashboard = data.CreateDashboard();
+            Dashboard = fixture.CreateDashboard();
         }
     }
 }

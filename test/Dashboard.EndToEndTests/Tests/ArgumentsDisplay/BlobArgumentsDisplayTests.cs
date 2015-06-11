@@ -40,13 +40,11 @@ namespace Dashboard.EndToEndTests
 
         private WebJobsStorageAccount _storageAccount;
 
-        public override void SetFixture(BlobArgumentsDisplayFixture data)
+        public BlobArgumentsDisplayTests(BlobArgumentsDisplayFixture fixture) : base(fixture)
         {
-            base.SetFixture(data);
-
             Waiters.WaitForAction(() => Dashboard.Api.IndexingQueueLength(limit: 1) == 0);
 
-            _storageAccount = data.StorageAccount;
+            _storageAccount = fixture.StorageAccount;
         }
 
         [Fact]

@@ -20,6 +20,11 @@ namespace Dashboard.EndToEndTests
 
     public class InvalidConnectionStringTests : DashboardTestClass<InvalidConnectionStringTestsFixture>
     {
+        public InvalidConnectionStringTests(InvalidConnectionStringTestsFixture fixture)
+            : base(fixture)
+        {
+        }
+
         [Fact]
         public void FunctionsPage_InaccessibleError()
         {

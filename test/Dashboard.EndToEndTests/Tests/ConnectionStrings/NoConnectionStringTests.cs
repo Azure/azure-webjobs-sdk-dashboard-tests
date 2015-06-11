@@ -20,6 +20,11 @@ namespace Dashboard.EndToEndTests
 
     public class NoConnectionStringTests : DashboardTestClass<NoConnectionStringTestsFixture>
     {
+        public NoConnectionStringTests(NoConnectionStringTestsFixture fixture) 
+            : base(fixture)
+        {
+        }
+
         [Fact]
         public void NavbarTitle()
         {
