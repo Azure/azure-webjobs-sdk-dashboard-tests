@@ -13,7 +13,7 @@
     <AssemblyName>Dashboard.EndToEndTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>c98dbbd9</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>65d883d2</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
