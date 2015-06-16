@@ -35,5 +35,14 @@ namespace Dashboard.EndToEndTests.DomAbstractions
                  return new InvocationDetailsSection(section);
              }
          }
+
+         public string TriggerReason
+         {
+             get
+             {
+                 IWebElement element = NgScope.FindElement(By.XPath("/html/body/div/div[2]/div[1]/div/p[4]/span[2]"));
+                 return element.Text;
+             }
+         }
     }
 }

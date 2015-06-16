@@ -15,6 +15,7 @@ namespace Dashboard.EndToEndTests
     {
         private readonly DashboardServer _server;
         private readonly WebJobsStorageAccount _storage;
+        private readonly string _serviceBusAccount;
 
         private bool _isDisposed;
 
@@ -38,6 +39,7 @@ namespace Dashboard.EndToEndTests
 
             _server = new DashboardServer(dashboardLocation);
             _storage = new WebJobsStorageAccount(GetFromConfigOrEnvironmentOrDefault("StorageAccount"));
+            _serviceBusAccount = GetFromConfigOrEnvironmentOrDefault("ServiceBusAccount");
             _server.SetStorageConnectionString(_storage.ConnectionString);
 
             if (cleanStorageAccount)
@@ -63,6 +65,16 @@ namespace Dashboard.EndToEndTests
                 GuardNotDisposed();
 
                 return _storage;
+            }
+        }
+
+        public string ServiceBusAccount
+        {
+            get
+            {
+                GuardNotDisposed();
+
+                return _serviceBusAccount;
             }
         }
 
