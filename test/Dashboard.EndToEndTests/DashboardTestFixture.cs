@@ -35,8 +35,6 @@ namespace Dashboard.EndToEndTests
             {
                 throw new Exception("Unable to find Dashboard site extension. Make sure you've configured 'DashboardSiteExtensionLocation' correctly.");
             }
-            string dashboardVersion = Path.GetFileName(dashboardLocation);
-            Console.WriteLine("Testing with Dashboard version '{0}'", dashboardVersion);
 
             _server = new DashboardServer(dashboardLocation);
             _storage = new WebJobsStorageAccount(GetFromConfigOrEnvironmentOrDefault("StorageAccount"));
