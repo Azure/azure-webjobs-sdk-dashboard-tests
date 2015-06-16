@@ -3,6 +3,8 @@
 
 using System;
 using System.Configuration;
+using System.IO;
+using System.Linq;
 using Dashboard.EndToEndTests.DomAbstractions;
 using Dashboard.EndToEndTests.Infrastructure;
 using TestEasy.WebBrowser;
@@ -25,7 +27,18 @@ namespace Dashboard.EndToEndTests
 
         public DashboardTestFixture(bool cleanStorageAccount)
         {
-            _server = new DashboardServer(GetFromConfigOrEnvironmentOrDefault("DashboardBinariesFolder"));
+            // "DashboardSiteExtensionLocation" should point to a root site extension directory (unzipped),
+            // which is the directory where the "extension.xml" file lives.
+            string dashboardLocation = GetFromConfigOrEnvironmentOrDefault("DashboardSiteExtensionLocation");
+            dashboardLocation = Directory.GetDirectories(dashboardLocation, "?.*.*").SingleOrDefault();
+            if (string.IsNullOrEmpty(dashboardLocation))
+            {
+                throw new Exception("Unable to find Dashboard site extension. Make sure you've configured 'DashboardSiteExtensionLocation' correctly.");
+            }
+            string dashboardVersion = Path.GetFileName(dashboardLocation);
+            Console.WriteLine("Testing with Dashboard version '{0}'", dashboardVersion);
+
+            _server = new DashboardServer(dashboardLocation);
             _storage = new WebJobsStorageAccount(GetFromConfigOrEnvironmentOrDefault("StorageAccount"));
             _server.SetStorageConnectionString(_storage.ConnectionString);
 
