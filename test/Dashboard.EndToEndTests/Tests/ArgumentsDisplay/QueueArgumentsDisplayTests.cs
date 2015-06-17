@@ -71,6 +71,9 @@ namespace Dashboard.EndToEndTests
                 .Cast<FunctionArgumentsTableRow>()
                 .ToArray();
 
+            string queueName = string.Format("queue-{0}-in", function.Name.ToLowerInvariant());
+            Assert.Equal(string.Format("New queue message detected on '{0}'.", queueName), page.TriggerReason);
+
             FunctionArgumentsTableRow argumentRow = rows[0];
             Assert.Equal("input", argumentRow.Name);
             Assert.Equal(POCO.JsonSample, argumentRow.Value.TextValue);

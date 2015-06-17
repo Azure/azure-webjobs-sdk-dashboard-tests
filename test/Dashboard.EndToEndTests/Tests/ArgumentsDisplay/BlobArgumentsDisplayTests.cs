@@ -173,8 +173,9 @@ namespace Dashboard.EndToEndTests
                 .ToArray();
 
             string blobPartialName = BlobArgumentsDisplayFunctions.ContainerName + "/" + function.Name.ToLowerInvariant();
-
             string fullBlobName = blobPartialName + "-trigger";
+            Assert.Equal(string.Format("New blob detected: {0}", fullBlobName), page.TriggerReason);
+
             FunctionArgumentsTableRow argumentRow = rows[0];
             Link blobLink = argumentRow.Value.BlobLink;
             Assert.Equal("trigger", argumentRow.Name);
