@@ -34,11 +34,7 @@ namespace Dashboard.EndToEndTests
                 .Cast<FunctionArgumentsTableRow>()
                 .ToArray();
 
-#if VNEXT_SDK
             string expectedMessage = string.Format("New ServiceBus message detected on '{0}'.", ServiceBusArgumentsDisplayFunctions.StartQueueName);
-#else
-            string expectedMessage = string.Format("New ServiceBus message detected on '{0}.", ServiceBusArgumentsDisplayFunctions.StartQueueName);
-#endif
             Assert.Equal(expectedMessage, page.TriggerReason);
 
             FunctionArgumentsTableRow argumentRow = rows[0];
@@ -97,11 +93,7 @@ namespace Dashboard.EndToEndTests
                 .Cast<FunctionArgumentsTableRow>()
                 .ToArray();
 
-#if VNEXT_SDK
             string expectedMessage = string.Format("New ServiceBus message detected on '{0}'.", ServiceBusArgumentsDisplayFunctions.FirstOutQueue);
-#else
-            string expectedMessage = string.Format("New ServiceBus message detected on '{0}.", ServiceBusArgumentsDisplayFunctions.FirstOutQueue);
-#endif
             Assert.Equal(expectedMessage, page.TriggerReason);
 
             FunctionArgumentsTableRow argumentRow = rows[0];
@@ -160,11 +152,7 @@ namespace Dashboard.EndToEndTests
                 .Cast<FunctionArgumentsTableRow>()
                 .ToArray();
 
-#if VNEXT_SDK
             string expectedMessage = string.Format("New ServiceBus message detected on '{0}/Subscriptions/{1}'.", ServiceBusArgumentsDisplayFunctions.TopicName, ServiceBusArgumentsDisplayFunctions.SubscriptionName);
-#else
-            string expectedMessage = string.Format("New ServiceBus message detected on '{0}/Subscriptions/{1}.", ServiceBusArgumentsDisplayFunctions.TopicName, ServiceBusArgumentsDisplayFunctions.SubscriptionName);
-#endif
             Assert.Equal(expectedMessage, page.TriggerReason);
 
             FunctionArgumentsTableRow argumentRow = rows[0];
