@@ -4,6 +4,7 @@
 using System.IO;
 using System.Threading;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
 
@@ -13,6 +14,7 @@ namespace Dashboard.EndToEndTests
     {
         private NamespaceManager _namespaceManager;
         private JobHostConfiguration _hostConfiguration;
+        private string _serviceBusConnectionString;
 
         public ServiceBusArgumentsDisplayTestsFixture()
             : base(cleanStorageAccount: true)
@@ -24,9 +26,16 @@ namespace Dashboard.EndToEndTests
                     typeof(DoneNotificationFunction))
             };
 
-            _hostConfiguration.ServiceBusConnectionString = ServiceBusAccount;
+#if VNEXT_SDK
+            ServiceBusConfiguration serviceBusConfig = new ServiceBusConfiguration();
+            serviceBusConfig.ConnectionString = ServiceBusAccount;
+            _serviceBusConnectionString = serviceBusConfig.ConnectionString;
+            _hostConfiguration.UseServiceBus(serviceBusConfig);
+#else
+            _serviceBusConnectionString = _hostConfiguration.ServiceBusConnectionString;
+#endif
 
-            _namespaceManager = NamespaceManager.CreateFromConnectionString(_hostConfiguration.ServiceBusConnectionString);
+            _namespaceManager = NamespaceManager.CreateFromConnectionString(_serviceBusConnectionString);
 
             // ensure we're starting in a clean state
             CleanServiceBusQueues();
@@ -54,7 +63,7 @@ namespace Dashboard.EndToEndTests
         {
             _namespaceManager.CreateQueue(ServiceBusArgumentsDisplayFunctions.StartQueueName);
 
-            QueueClient queueClient = QueueClient.CreateFromConnectionString(_hostConfiguration.ServiceBusConnectionString, ServiceBusArgumentsDisplayFunctions.StartQueueName);
+            QueueClient queueClient = QueueClient.CreateFromConnectionString(_serviceBusConnectionString, ServiceBusArgumentsDisplayFunctions.StartQueueName);
 
             using (Stream stream = new MemoryStream())
             using (TextWriter writer = new StreamWriter(stream))
