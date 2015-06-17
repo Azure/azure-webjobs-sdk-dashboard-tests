@@ -2,19 +2,11 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using OpenQA.Selenium;
 
 namespace Dashboard.EndToEndTests.DomAbstractions
 {
-    public class FormElement
-    {
-        public string Label { get; set; }
-        public string InputValue { get; set; }
-    }
-
-    public class RunFunctionPage : DashboardPage
+    public class RunFunctionPage : InvokeFunctionPage
     {
         public const string RelativePath = "function/run?functionId=";
 
@@ -31,31 +23,6 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             }
 
             return RelativePath + functionDefinitonId;
-        }
-
-        public Collection<FormElement> GetParameters()
-        {
-            IWebElement runForm = Driver.FindElement(By.XPath("/html/body/div/form"));
-            IWebElement[] parameterRows = runForm.FindElements(By.XPath("fieldset/div")).ToArray();
-
-            Collection<FormElement> formElements = new Collection<FormElement>();
-            foreach (IWebElement row in parameterRows)
-            {
-                if (row.Text == "Run")
-                {
-                    continue;
-                }
-
-                var inputBox = row.FindElement(By.TagName("input"));
-                FormElement formElement = new FormElement
-                {
-                    Label = row.Text,
-                    InputValue = inputBox.GetAttribute("value")
-                };
-                formElements.Add(formElement);
-            }
-
-            return formElements;
         }
     }
 }

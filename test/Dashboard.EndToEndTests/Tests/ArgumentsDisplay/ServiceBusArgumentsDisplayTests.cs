@@ -65,6 +65,23 @@ namespace Dashboard.EndToEndTests
         }
 
         [Fact]
+        public void SBQueue2SBQueue_VerifyReplayFunctionForm()
+        {
+            ReplayFunctionPage page = GetReplayPage(ServiceBusArgumentsDisplayFunctions.SBQueue2SBQueueMethodInfo);
+
+            Collection<FormElement> parameters = page.GetParameters();
+            Assert.Equal(2, parameters.Count);
+
+            FormElement element = parameters[0];
+            Assert.Equal("start Enter the queue message body", element.Label);
+            Assert.Equal("E2E", element.InputValue);
+
+            element = parameters[1];
+            Assert.Equal("message Enter the output entity name", element.Label);
+            Assert.Equal("servicebus-output1", element.InputValue);
+        }
+
+        [Fact]
         public void SBQueue2SBTopic_VerifyInvocation()
         {
             FunctionInvocationPage page = GetInvocationPage(ServiceBusArgumentsDisplayFunctions.SBQueue2SBTopicMethodInfo);
@@ -99,6 +116,23 @@ namespace Dashboard.EndToEndTests
             FormElement element = parameters[0];
             Assert.Equal("message Enter the queue message body", element.Label);
             Assert.Equal(string.Empty, element.InputValue);
+
+            element = parameters[1];
+            Assert.Equal("output Enter the output entity name", element.Label);
+            Assert.Equal("servicebus-topic", element.InputValue);
+        }
+
+        [Fact]
+        public void SBQueue2SBTopic_VerifyReplayFunctionForm()
+        {
+            ReplayFunctionPage page = GetReplayPage(ServiceBusArgumentsDisplayFunctions.SBQueue2SBTopicMethodInfo);
+
+            Collection<FormElement> parameters = page.GetParameters();
+            Assert.Equal(2, parameters.Count);
+
+            FormElement element = parameters[0];
+            Assert.Equal("message Enter the queue message body", element.Label);
+            Assert.Equal("E2E-SBQueue2SBQueue", element.InputValue);
 
             element = parameters[1];
             Assert.Equal("output Enter the output entity name", element.Label);
@@ -146,10 +180,26 @@ namespace Dashboard.EndToEndTests
             Assert.Equal("queue-done", element.InputValue);
         }
 
+        [Fact]
+        public void SBTopicListener_VerifyReplayFunctionForm()
+        {
+            ReplayFunctionPage page = GetReplayPage(ServiceBusArgumentsDisplayFunctions.SBTopicListenerMethodInfo);
+
+            Collection<FormElement> parameters = page.GetParameters();
+            Assert.Equal(2, parameters.Count);
+
+            FormElement element = parameters[0];
+            Assert.Equal("message Enter the queue message body", element.Label);
+            Assert.Equal("E2E-SBQueue2SBQueue-SBQueue2SBTopic", element.InputValue);
+
+            element = parameters[1];
+            Assert.Equal("done Enter the output queue name", element.Label);
+            Assert.Equal("queue-done", element.InputValue);
+        }
+
         private FunctionInvocationPage GetInvocationPage(MethodInfo method)
         {
-            InvocationDetails[] invocations = _storageAccount.MethodInfoToInvocations(method).ToArray();
-            InvocationDetails invocation = invocations.Single();
+            InvocationDetails invocation = _storageAccount.MethodInfoToInvocations(method).Single();
 
             return Dashboard.GoToFunctionInvocationPage(invocation.Id);
         }
@@ -159,6 +209,13 @@ namespace Dashboard.EndToEndTests
             string functionId = _storageAccount.MethodInfoToFunctionDefinitionId(method);
 
             return Dashboard.GoToRunPage(functionId);
+        }
+
+        private ReplayFunctionPage GetReplayPage(MethodInfo method)
+        {
+            InvocationDetails invocation = _storageAccount.MethodInfoToInvocations(method).Single();
+
+            return Dashboard.GoToReplayPage(invocation.Id);
         }
     }
 }

@@ -111,6 +111,14 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             return new RunFunctionPage(Driver);
         }
 
+        public ReplayFunctionPage GoToReplayPage(string parentId)
+        {
+            GuardNotDisposed();
+
+            GoTo(BuildFullUrl(ReplayFunctionPage.ConstructRelativePath(parentId)));
+            return new ReplayFunctionPage(Driver);
+        }
+
         public string BuildFullUrl(string relativeUrl)
         {
             return _baseAddress + "/" + relativeUrl;

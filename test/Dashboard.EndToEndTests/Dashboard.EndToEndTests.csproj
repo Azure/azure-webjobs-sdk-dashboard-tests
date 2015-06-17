@@ -45,6 +45,9 @@
     <Compile Include="..\Common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DomAbstractions\Pages\FormElement.cs" />
+    <Compile Include="DomAbstractions\Pages\InvokeFunctionPage.cs" />
+    <Compile Include="DomAbstractions\Pages\ReplayFunctionPage.cs" />
     <Compile Include="ExplicitTypeLocator.cs" />
     <Compile Include="Tests\ArgumentsDisplay\BlobArgumentsDisplayFunctions.cs" />
     <Compile Include="Tests\ArgumentsDisplay\BlobArgumentsDisplayFixture.cs" />
