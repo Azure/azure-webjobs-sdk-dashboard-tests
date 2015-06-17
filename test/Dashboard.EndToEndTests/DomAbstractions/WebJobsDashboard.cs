@@ -103,6 +103,14 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             return new FunctionInvocationPage(Driver);
         }
 
+        public RunFunctionPage GoToRunPage(string functionDefinitonId)
+        {
+            GuardNotDisposed();
+
+            GoTo(BuildFullUrl(RunFunctionPage.ConstructRelativePath(functionDefinitonId)));
+            return new RunFunctionPage(Driver);
+        }
+
         public string BuildFullUrl(string relativeUrl)
         {
             return _baseAddress + "/" + relativeUrl;

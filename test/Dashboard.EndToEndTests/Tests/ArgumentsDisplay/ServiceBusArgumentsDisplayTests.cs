@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using Dashboard.EndToEndTests.DomAbstractions;
@@ -23,7 +24,7 @@ namespace Dashboard.EndToEndTests
         }
 
         [Fact]
-        public void VerifySBQueue2SBQueueInvocation()
+        public void SBQueue2SBQueue_VerifyInvocation()
         {
             FunctionInvocationPage page = GetInvocationPage(ServiceBusArgumentsDisplayFunctions.SBQueue2SBQueueMethodInfo);
             FunctionArgumentsTable arguments = page.DetailsSection.ArgumentsTable;
@@ -47,7 +48,24 @@ namespace Dashboard.EndToEndTests
         }
 
         [Fact]
-        public void VerifySBQueue2SBTopicInvocation()
+        public void SBQueue2SBQueue_VerifyRunFunctionForm()
+        {
+            RunFunctionPage page = GetRunPage(ServiceBusArgumentsDisplayFunctions.SBQueue2SBQueueMethodInfo);
+
+            Collection<FormElement> parameters = page.GetParameters();
+            Assert.Equal(2, parameters.Count);
+
+            FormElement element = parameters[0];
+            Assert.Equal("start Enter the queue message body", element.Label);
+            Assert.Equal(string.Empty, element.InputValue);
+
+            element = parameters[1];
+            Assert.Equal("message Enter the output entity name", element.Label);
+            Assert.Equal("servicebus-output1", element.InputValue);
+        }
+
+        [Fact]
+        public void SBQueue2SBTopic_VerifyInvocation()
         {
             FunctionInvocationPage page = GetInvocationPage(ServiceBusArgumentsDisplayFunctions.SBQueue2SBTopicMethodInfo);
             FunctionArgumentsTable arguments = page.DetailsSection.ArgumentsTable;
@@ -71,7 +89,24 @@ namespace Dashboard.EndToEndTests
         }
 
         [Fact]
-        public void VerifySBTopicListenerInvocation()
+        public void SBQueue2SBTopic_VerifyRunFunctionForm()
+        {
+            RunFunctionPage page = GetRunPage(ServiceBusArgumentsDisplayFunctions.SBQueue2SBTopicMethodInfo);
+
+            Collection<FormElement> parameters = page.GetParameters();
+            Assert.Equal(2, parameters.Count);
+
+            FormElement element = parameters[0];
+            Assert.Equal("message Enter the queue message body", element.Label);
+            Assert.Equal(string.Empty, element.InputValue);
+
+            element = parameters[1];
+            Assert.Equal("output Enter the output entity name", element.Label);
+            Assert.Equal("servicebus-topic", element.InputValue);
+        }
+
+        [Fact]
+        public void SBTopicListener_VerifyInvocation()
         {
             FunctionInvocationPage page = GetInvocationPage(ServiceBusArgumentsDisplayFunctions.SBTopicListenerMethodInfo);
             FunctionArgumentsTable arguments = page.DetailsSection.ArgumentsTable;
@@ -94,12 +129,36 @@ namespace Dashboard.EndToEndTests
             Assert.Equal(string.Empty, argumentRow.Notes);
         }
 
+        [Fact]
+        public void SBTopicListener_VerifyRunFunctionForm()
+        {
+            RunFunctionPage page = GetRunPage(ServiceBusArgumentsDisplayFunctions.SBTopicListenerMethodInfo);
+
+            Collection<FormElement> parameters = page.GetParameters();
+            Assert.Equal(2, parameters.Count);
+
+            FormElement element = parameters[0];
+            Assert.Equal("message Enter the queue message body", element.Label);
+            Assert.Equal(string.Empty, element.InputValue);
+
+            element = parameters[1];
+            Assert.Equal("done Enter the output queue name", element.Label);
+            Assert.Equal("queue-done", element.InputValue);
+        }
+
         private FunctionInvocationPage GetInvocationPage(MethodInfo method)
         {
             InvocationDetails[] invocations = _storageAccount.MethodInfoToInvocations(method).ToArray();
             InvocationDetails invocation = invocations.Single();
 
             return Dashboard.GoToFunctionInvocationPage(invocation.Id);
+        }
+
+        private RunFunctionPage GetRunPage(MethodInfo method)
+        {
+            string functionId = _storageAccount.MethodInfoToFunctionDefinitionId(method);
+
+            return Dashboard.GoToRunPage(functionId);
         }
     }
 }
