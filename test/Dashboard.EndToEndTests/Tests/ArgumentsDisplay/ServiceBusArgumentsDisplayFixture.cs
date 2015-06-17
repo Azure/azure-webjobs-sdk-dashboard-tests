@@ -32,7 +32,7 @@ namespace Dashboard.EndToEndTests
             _serviceBusConnectionString = serviceBusConfig.ConnectionString;
             _hostConfiguration.UseServiceBus(serviceBusConfig);
 #else
-            _serviceBusConnectionString = _hostConfiguration.ServiceBusConnectionString;
+            _serviceBusConnectionString = ServiceBusAccount;
 #endif
 
             _namespaceManager = NamespaceManager.CreateFromConnectionString(_serviceBusConnectionString);
