@@ -172,6 +172,7 @@ namespace Dashboard.EndToEndTests
                 .Cast<FunctionArgumentsTableRow>()
                 .ToArray();
 
+            string accountName = _storageAccount.CloudStorageAccount.Credentials.AccountName;
             string blobPartialName = BlobArgumentsDisplayFunctions.ContainerName + "/" + function.Name.ToLowerInvariant();
             string fullBlobName = blobPartialName + "-trigger";
             Assert.Equal(string.Format("New blob detected: {0}", fullBlobName), page.TriggerReason);
@@ -182,7 +183,7 @@ namespace Dashboard.EndToEndTests
             Assert.True(blobLink.IsUserAccesible);
             Assert.Equal(fullBlobName, blobLink.Text);
             Assert.Equal(
-                Dashboard.Api.ConstructDownloadBlobUrl(fullBlobName),
+                Dashboard.Api.ConstructDownloadBlobUrl(fullBlobName, accountName),
                 blobLink.Href,
                 StringComparer.OrdinalIgnoreCase);
 
@@ -193,7 +194,7 @@ namespace Dashboard.EndToEndTests
             Assert.True(blobLink.IsUserAccesible);
             Assert.Equal(fullBlobName, blobLink.Text);
             Assert.Equal(
-                Dashboard.Api.ConstructDownloadBlobUrl(fullBlobName),
+                Dashboard.Api.ConstructDownloadBlobUrl(fullBlobName, accountName),
                 blobLink.Href,
                 StringComparer.OrdinalIgnoreCase);
 
@@ -204,7 +205,7 @@ namespace Dashboard.EndToEndTests
             Assert.True(blobLink.IsUserAccesible);
             Assert.Equal(fullBlobName, blobLink.Text);
             Assert.Equal(
-                Dashboard.Api.ConstructDownloadBlobUrl(fullBlobName),
+                Dashboard.Api.ConstructDownloadBlobUrl(fullBlobName, accountName),
                 blobLink.Href,
                 StringComparer.OrdinalIgnoreCase);
 

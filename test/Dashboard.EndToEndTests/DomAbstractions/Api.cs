@@ -15,8 +15,7 @@ namespace Dashboard.EndToEndTests.DomAbstractions
 
         private const string LogApi = "/api/log";
         private const string DownloadBlobApi = LogApi + "/blob?path=";
-
-
+        
         private readonly string _baseAddress;
 
         internal Api(string baseAddress)
@@ -29,14 +28,20 @@ namespace Dashboard.EndToEndTests.DomAbstractions
             _baseAddress = baseAddress;
         }
 
-        public string ConstructDownloadBlobUrl(string blobPath)
+        public string ConstructDownloadBlobUrl(string blobPath, string accountName)
         {
             if (String.IsNullOrWhiteSpace(blobPath))
             {
                 throw new ArgumentNullException("blobPath");
             }
 
-            return _baseAddress + DownloadBlobApi + HttpUtility.UrlEncode(blobPath);
+            string url = string.Format("{0}{1}{2}&accountName={3}", 
+                _baseAddress, 
+                DownloadBlobApi, 
+                HttpUtility.UrlEncode(blobPath), 
+                HttpUtility.UrlEncode(accountName));
+
+            return url;
         }
 
         public int IndexingQueueLength(int limit)
