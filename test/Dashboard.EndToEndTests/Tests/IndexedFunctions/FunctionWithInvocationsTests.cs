@@ -169,7 +169,7 @@ namespace Dashboard.EndToEndTests
 
             string exceptionMessage = section.ExceptionMessage;
             Assert.NotNull(exceptionMessage);
-            Assert.True(exceptionMessage.StartsWith("System.InvalidOperationException: System.InvalidOperationException: Operation is not valid due to the current state of the object"));
+            Assert.True(exceptionMessage.StartsWith("Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Microsoft.Azure.WebJobs.Host.FunctionInvocationException: Exception while executing function: SingleFunction.Function ---> System.InvalidOperationException: Operation is not valid due to the current state of the object."));
             Assert.Equal("This function was programmatically called via the host APIs.", section.InvokeReason);
         }
 
