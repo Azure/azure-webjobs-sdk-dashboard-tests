@@ -11,6 +11,7 @@ using Dashboard.EndToEndTests.HtmlAbstractions.Angular;
 using Dashboard.EndToEndTests.Infrastructure;
 using Dashboard.EndToEndTests.Infrastructure.DashboardData;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
 using Xunit;
 
 namespace Dashboard.EndToEndTests
@@ -32,7 +33,7 @@ namespace Dashboard.EndToEndTests
             {
                 host.Call(SingleFunction.FunctionMethodInfo, new { fail = true, logOnSuccess = false });
             }
-            catch (InvalidOperationException)
+            catch (FunctionInvocationException)
             {
                 // The exception is thrown by the function
             }
