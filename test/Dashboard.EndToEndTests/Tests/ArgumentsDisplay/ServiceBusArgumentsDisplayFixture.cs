@@ -26,15 +26,10 @@ namespace Dashboard.EndToEndTests
                     typeof(DoneNotificationFunction))
             };
 
-#if VNEXT_SDK
             ServiceBusConfiguration serviceBusConfig = new ServiceBusConfiguration();
             serviceBusConfig.ConnectionString = ServiceBusAccount;
             _serviceBusConnectionString = serviceBusConfig.ConnectionString;
             _hostConfiguration.UseServiceBus(serviceBusConfig);
-#else
-            _serviceBusConnectionString = ServiceBusAccount;
-            _hostConfiguration.ServiceBusConnectionString = _serviceBusConnectionString;
-#endif
 
             _namespaceManager = NamespaceManager.CreateFromConnectionString(_serviceBusConnectionString);
 
