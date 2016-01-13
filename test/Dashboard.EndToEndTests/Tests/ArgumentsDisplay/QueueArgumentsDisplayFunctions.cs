@@ -20,6 +20,17 @@ namespace Dashboard.EndToEndTests
         public static readonly MethodInfo ICollectorMethodInfo = typeof(QueueArgumentsDisplayFunctions).GetMethod("ICollector");
         public static readonly MethodInfo PocoMethodInfo = typeof(QueueArgumentsDisplayFunctions).GetMethod("POCO");
         public static readonly MethodInfo CloudQueueMessageMethodInfo = typeof(QueueArgumentsDisplayFunctions).GetMethod("CloudQueueMessage");
+        public static readonly MethodInfo SingletonMethodInfo = typeof(QueueArgumentsDisplayFunctions).GetMethod("Singleton");
+
+        [Singleton("TestScope")]
+        public static void Singleton(
+            [QueueTrigger("queue-singleton-in")] string input,
+            [Queue("queue-singleton-out")] out string output,
+            [Queue(DoneNotificationFunction.DoneQueueName)] out string done)
+        {
+            output = input;
+            done = "x";
+        }
 
         public static void NullOutput(
             [QueueTrigger("queue-nulloutput-in")] string input,

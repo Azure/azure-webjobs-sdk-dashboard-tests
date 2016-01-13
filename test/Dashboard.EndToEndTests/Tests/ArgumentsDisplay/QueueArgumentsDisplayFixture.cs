@@ -19,6 +19,7 @@ namespace Dashboard.EndToEndTests
             InvokeQueueFunctionAndWaitForResult(QueueArgumentsDisplayFunctions.NullOutputMethodInfo);
             InvokeQueueFunctionAndWaitForResult(QueueArgumentsDisplayFunctions.PocoMethodInfo);
             InvokeQueueFunctionAndWaitForResult(QueueArgumentsDisplayFunctions.StringMethodInfo);
+            InvokeQueueFunctionAndWaitForResult(QueueArgumentsDisplayFunctions.SingletonMethodInfo);
         }
 
         public static string CreateQueueName(MethodInfo function, bool input)

@@ -3,6 +3,7 @@
 
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Dashboard.EndToEndTests.DomAbstractions;
 using Dashboard.EndToEndTests.Infrastructure;
 using Dashboard.EndToEndTests.Infrastructure.DashboardData;
@@ -46,6 +47,23 @@ namespace Dashboard.EndToEndTests
         }
 
         [Fact]
+        public void Queue_Singleton()
+        {
+            FunctionInvocationPage page = FunctionWithQueueArgumentsTest(QueueArgumentsDisplayFunctions.SingletonMethodInfo);
+
+            FunctionArgumentsTable arguments = page.DetailsSection.ArgumentsTable;
+            FunctionArgumentsTableRow[] rows = arguments.BodyRows.Cast<FunctionArgumentsTableRow>().ToArray();
+
+            // verify the implicit singleton parameter
+            FunctionArgumentsTableRow argumentRow = rows[3];
+            Assert.Equal("(singleton)", argumentRow.Name);
+            Assert.Equal("Scope: TestScope", argumentRow.Value.TextValue);
+
+            Regex regex = new Regex(@"Lock acquired. Wait time: About (\d*) milliseconds. Lock duration: About (\d*) milliseconds.");
+            Assert.True(regex.IsMatch(argumentRow.Notes));
+        }
+
+        [Fact]
         public void Queue_POCOArguments()
         {
             FunctionWithQueueArgumentsTest(QueueArgumentsDisplayFunctions.PocoMethodInfo);
@@ -57,7 +75,7 @@ namespace Dashboard.EndToEndTests
             FunctionWithQueueArgumentsTest(QueueArgumentsDisplayFunctions.StringMethodInfo);
         }
 
-        private void FunctionWithQueueArgumentsTest(MethodInfo function)
+        private FunctionInvocationPage FunctionWithQueueArgumentsTest(MethodInfo function)
         {
             InvocationDetails invocation = _storageAccount
                 .MethodInfoToInvocations(function)
@@ -85,6 +103,8 @@ namespace Dashboard.EndToEndTests
                 QueueArgumentsDisplayTestsFixture.CreateQueueName(function, input: false),
                 argumentRow.Value.TextValue);
             Assert.Equal(string.Empty, argumentRow.Notes);
+
+            return page;
         }
     }
 }
