@@ -57,7 +57,7 @@ namespace Dashboard.EndToEndTests
             // verify the implicit singleton parameter
             FunctionArgumentsTableRow argumentRow = rows[3];
             Assert.Equal("(singleton)", argumentRow.Name);
-            Assert.Equal("Scope: TestScope", argumentRow.Value.TextValue);
+            Assert.Equal("ScopeId: TestScope", argumentRow.Value.TextValue);
 
             Regex regex = new Regex(@"Lock acquired. Wait time: About (\d*) milliseconds. Lock duration: About (\d*) milliseconds.");
             Assert.True(regex.IsMatch(argumentRow.Notes));
