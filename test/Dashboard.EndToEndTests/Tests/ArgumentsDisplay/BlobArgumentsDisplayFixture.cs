@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Reflection;
-using System.Threading;
 using Microsoft.Azure.WebJobs;
 using Microsoft.WindowsAzure.Storage.Blob;
 
@@ -58,13 +57,7 @@ namespace Dashboard.EndToEndTests
                     typeof(DoneNotificationFunction))
             };
 
-            using (JobHost host = new JobHost(hostConfiguration))
-            using (DoneNotificationFunction._doneEvent = new ManualResetEvent(initialState: false))
-            {
-                host.Start();
-                DoneNotificationFunction._doneEvent.WaitOne();
-                host.Stop();
-            }
+            RunTestHost(hostConfiguration);
         }
     }
 }

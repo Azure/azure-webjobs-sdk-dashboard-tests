@@ -184,26 +184,25 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TestEasy.Client">
-      <HintPath>..\..\packages\TestEasy.Client.1.0.60\lib\TestEasy.Client.dll</HintPath>
+    <Reference Include="TestEasy.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\TestEasy.Core.1.1.0\lib\TestEasy.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="TestEasy.Core">
-      <HintPath>..\..\packages\TestEasy.Core.1.0.90\lib\TestEasy.Core.dll</HintPath>
+    <Reference Include="TestEasy.WebBrowser, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\TestEasy.WebBrowser.1.1.0\lib\TestEasy.WebBrowser.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="TestEasy.Server">
-      <HintPath>..\..\packages\TestEasy.Server.1.0.60\lib\TestEasy.Server.dll</HintPath>
+    <Reference Include="TestEasy.WebServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\TestEasy.WebServer.1.1.0\lib\TestEasy.WebServer.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="TestEasy.WebBrowser">
-      <HintPath>..\..\packages\TestEasy.WebBrowser.1.0.90\lib\TestEasy.WebBrowser.dll</HintPath>
-    </Reference>
-    <Reference Include="TestEasy.WebServer">
-      <HintPath>..\..\packages\TestEasy.WebServer.1.0.90\lib\TestEasy.WebServer.dll</HintPath>
-    </Reference>
-    <Reference Include="WebDriver">
+    <Reference Include="WebDriver, Version=2.42.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Selenium.WebDriver.2.42.0\lib\net40\WebDriver.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="WebDriver.Support">
-      <HintPath>..\..\packages\Selenium.Support.2.33.0\lib\net40\WebDriver.Support.dll</HintPath>
+    <Reference Include="WebDriver.Support, Version=2.42.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Selenium.Support.2.42.0\lib\net40\WebDriver.Support.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
       <HintPath>..\..\packages\xunit.abstractions.2.0.0\lib\net35\xunit.abstractions.dll</HintPath>

@@ -5,8 +5,10 @@ using System;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Dashboard.EndToEndTests.DomAbstractions;
 using Dashboard.EndToEndTests.Infrastructure;
+using Microsoft.Azure.WebJobs;
 using TestEasy.WebBrowser;
 
 namespace Dashboard.EndToEndTests
@@ -26,7 +28,7 @@ namespace Dashboard.EndToEndTests
         {
         }
 
-        public DashboardTestFixture(bool cleanStorageAccount)
+        public DashboardTestFixture(bool cleanStorageAccount, string connectionString = null)
         {
             // "DashboardSiteExtensionLocation" should point to a root site extension directory (unzipped),
             // which is the directory where the "extension.xml" file lives.
@@ -37,15 +39,21 @@ namespace Dashboard.EndToEndTests
                 throw new Exception("Unable to find Dashboard site extension. Make sure you've configured 'DashboardSiteExtensionLocation' correctly.");
             }
 
-            _server = new DashboardServer(dashboardLocation);
             _storage = new WebJobsStorageAccount(GetFromConfigOrEnvironmentOrDefault("StorageAccount"));
             _serviceBusAccount = GetFromConfigOrEnvironmentOrDefault("ServiceBusAccount");
-            _server.SetStorageConnectionString(_storage.ConnectionString);
 
             if (cleanStorageAccount)
             {
                 _storage.Empty();
             }
+
+            if (connectionString == null)
+            {
+                connectionString = _storage.ConnectionString;
+            }
+
+            _server = new DashboardServer(dashboardLocation, connectionString);
+            _server.Start();
         }
 
         public DashboardServer Server
@@ -113,6 +121,25 @@ namespace Dashboard.EndToEndTests
                 {
                     _dashboard.Dispose();
                     _dashboard = null;
+                }
+            }
+        }
+
+        protected void RunTestHost(JobHostConfiguration config)
+        {
+            using (JobHost host = new JobHost(config))
+            using (DoneNotificationFunction._doneEvent = new ManualResetEvent(initialState: false))
+            {
+                host.Start();
+                DoneNotificationFunction._doneEvent.WaitOne();
+
+                try
+                {
+                    host.Stop();
+                }
+                catch
+                {
+                    // We don't care about errors here
                 }
             }
         }

@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using Dashboard.EndToEndTests.DomAbstractions;
 using Dashboard.EndToEndTests.HtmlAbstractions;
-using Dashboard.EndToEndTests.Infrastructure;
 using Microsoft.Azure.WebJobs;
 using Xunit;
 

@@ -2,10 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using Microsoft.Web.Administration;
-using TestEasy.Core.Configuration;
+using System.Threading;
 using TestEasy.WebServer;
 
 namespace Dashboard.EndToEndTests.Infrastructure
@@ -15,26 +15,68 @@ namespace Dashboard.EndToEndTests.Infrastructure
         private const string ApplicationName = "WebJobsDashboard";
         private const string ConnectionStringFormat = "<add name=\"AzureWebJobsDashboard\" connectionString=\"(?<cs>[^\"]*)\" />"; 
 
-        private readonly WebServer _server;
-        private readonly Application _application;
-        private readonly string _virtualPath;
-        private readonly string _webConfigFilePath;
+        private WebServer _webServer;
+        private WebApplicationInfo _webApplicationInfo;
+        private string _virtualPath;
+        private string _webConfigFilePath;
 
         private bool _disposed;
 
-        public DashboardServer(string deployPath)
+        public DashboardServer(string deployPath, string connectionString)
         {
             if (string.IsNullOrWhiteSpace(deployPath))
             {
                 throw new ArgumentNullException(deployPath);
             }
 
-            _server = WebServer.Create(WebServerType.IISExpress);
-            _application = _server.CreateWebApplication(ApplicationName);
-            _application.Deploy(deployPath);
+            if (connectionString == null)
+            {
+                throw new ArgumentNullException(connectionString);
+            }
 
-            _webConfigFilePath = Path.Combine(_server.RootPhysicalPath, ApplicationName, "web.config");
-            _virtualPath = _server.GetApplicationVirtualPath(_application, TestEasyConfig.Instance.Client.Remote);
+            CreateWebServer(deployPath, connectionString);
+        }
+
+        private void CreateWebServer(string deployPath, string connectionString)
+        {
+            const int MaxRetries = 3;
+            int attempt = 0;
+
+            while (true)
+            {
+                try
+                {
+                    _webServer = WebServer.Create("iisexpress");
+                    _webApplicationInfo = _webServer.CreateWebApplication(ApplicationName);
+                    _webServer.DeployWebApplication(_webApplicationInfo.Name, new List<DeploymentItem>
+                        {
+                            new DeploymentItem { Type = DeploymentItemType.Directory, Path = deployPath }
+                        });
+
+                    _webConfigFilePath = Path.Combine(_webServer.RootPhysicalPath, ApplicationName, "web.config");
+                    SetStorageConnectionString(connectionString);
+
+                    _virtualPath = _webApplicationInfo.VirtualPath;
+
+                    return;
+                }
+                catch
+                {
+                    if (attempt++ < MaxRetries)
+                    {
+                        // Swallow any startup errors and retry after a short
+                        // period
+                        // We're seeing some File IO issues from TestEasy that look
+                        // like timing issues
+                        Thread.Sleep(2000);
+                    }
+                    else
+                    {
+                        // We're unable to create the server even after retries
+                        throw;
+                    } 
+                }
+            }
         }
 
         public string VirtualPath
@@ -46,7 +88,12 @@ namespace Dashboard.EndToEndTests.Infrastructure
             }
         }
 
-        public void SetStorageConnectionString(string connectionString)
+        public void Start()
+        {
+            _webServer.Start();
+        }
+
+        private void SetStorageConnectionString(string connectionString)
         {
             const string connectionStringGroupName = "cs";
 
@@ -77,7 +124,8 @@ namespace Dashboard.EndToEndTests.Infrastructure
             if (!_disposed)
             {
                 _disposed = true;
-                _server.Dispose();
+                _webServer.Stop();
+                _webServer.Dispose();
             }
         }
 

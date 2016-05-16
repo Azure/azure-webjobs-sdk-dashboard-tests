@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.IO;
-using System.Threading;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.ServiceBus;
@@ -46,13 +45,7 @@ namespace Dashboard.EndToEndTests
             // create the initial messgage that starts the function chain
             CreateStartMessage();
 
-            using (JobHost host = new JobHost(_hostConfiguration))
-            using (DoneNotificationFunction._doneEvent = new ManualResetEvent(initialState: false))
-            {
-                host.Start();
-                DoneNotificationFunction._doneEvent.WaitOne();
-                host.Stop();
-            }
+            RunTestHost(_hostConfiguration);
         }
 
         private void CreateStartMessage()

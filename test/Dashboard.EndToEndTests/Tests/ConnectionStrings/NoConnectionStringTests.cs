@@ -12,9 +12,8 @@ namespace Dashboard.EndToEndTests
     public class NoConnectionStringTestsFixture : DashboardTestFixture
     {
         public NoConnectionStringTestsFixture()
-            : base(cleanStorageAccount: false)
+            : base(cleanStorageAccount: false, connectionString: "")
         {
-            Server.SetStorageConnectionString(null);
         }
     }
 

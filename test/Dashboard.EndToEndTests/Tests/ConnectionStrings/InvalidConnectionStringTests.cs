@@ -12,9 +12,8 @@ namespace Dashboard.EndToEndTests
     public class InvalidConnectionStringTestsFixture : DashboardTestFixture
     {
         public InvalidConnectionStringTestsFixture()
-            : base(cleanStorageAccount: false)
+            : base(cleanStorageAccount: false, connectionString: "DefaultEndpointsProtocol=https;AccountName=xxxxxxxxxx;AccountKey=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX==")
         {
-            Server.SetStorageConnectionString("DefaultEndpointsProtocol=https;AccountName=xxxxxxxxxx;AccountKey=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX==");
         }
     }
 
