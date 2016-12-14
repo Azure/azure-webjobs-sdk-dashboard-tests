@@ -23,13 +23,13 @@ namespace Dashboard.EndToEndTests
         public static readonly MethodInfo SingletonMethodInfo = typeof(QueueArgumentsDisplayFunctions).GetMethod("Singleton");
 
         [Singleton("TestScope")]
-        public static void Singleton(
+        public static async Task Singleton(
             [QueueTrigger("queue-singleton-in")] string input,
-            [Queue("queue-singleton-out")] out string output,
-            [Queue(DoneNotificationFunction.DoneQueueName)] out string done)
+            [Queue("queue-singleton-out")] IAsyncCollector<string> output,
+            [Queue(DoneNotificationFunction.DoneQueueName)] IAsyncCollector<string> done)
         {
-            output = input;
-            done = "x";
+            await output.AddAsync(input);
+            await done.AddAsync("x");
         }
 
         public static void NullOutput(
@@ -59,17 +59,17 @@ namespace Dashboard.EndToEndTests
             done = "x";
         }
 
-        public static void ICollector(
+        public static async Task ICollector(
             [QueueTrigger("queue-icollector-in")] string input,
-            [Queue("queue-icollector-out")] ICollector<string> output,
-            [Queue(DoneNotificationFunction.DoneQueueName)] out string done)
+            [Queue("queue-icollector-out")] IAsyncCollector<string> output,
+            [Queue(DoneNotificationFunction.DoneQueueName)] IAsyncCollector<string> done)
         {
             foreach (char c in input)
             {
-                output.Add(c.ToString());
+                await output.AddAsync(c.ToString());
             }
 
-            done = "x";
+            await done.AddAsync("x");
         }
 
         public static void POCO(

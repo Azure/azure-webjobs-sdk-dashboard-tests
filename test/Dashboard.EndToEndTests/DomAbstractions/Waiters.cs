@@ -110,7 +110,7 @@ namespace Dashboard.EndToEndTests.DomAbstractions
 
         public static void WaitForAction(Func<bool> action)
         {
-            WaitForAction(action, TimeSpan.FromSeconds(15));
+            WaitForAction(action, TimeSpan.FromSeconds(25));
         }
 
         public static T WaitForElementToAppear<T>(Func<T> actionToWait)
