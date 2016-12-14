@@ -75,7 +75,7 @@
 
   <UsingTask TaskName="Xunit.Runner.MSBuild.xunit" AssemblyFile="packages\xunit.MSBuild.2.0.0.0\tools\xunit.runner.msbuild.dll"/>
 
-  <Target Name="FunctionalTest" DependsOnTargets="Build">
+  <Target Name="BuildFunctionalTest" DependsOnTargets="Build">
     <ItemGroup>
       <FunctionalTestProjects Include="test\Dashboard.EndToEndTests\Dashboard.EndToEndTests.csproj"/>
     </ItemGroup>
@@ -85,7 +85,9 @@
              BuildInParallel="$(BuildInParallel)">
       <Output TaskParameter="TargetOutputs" ItemName="FunctionalTestAssemblies"/>
     </MSBuild>
+  </Target>
 
+  <Target Name="FunctionalTest" DependsOnTargets="BuildFunctionalTest">
     <xunit Assemblies="@(FunctionalTestAssemblies)"/>
   </Target>
 

@@ -48,11 +48,11 @@ namespace Dashboard.EndToEndTests
             [BlobTrigger(ContainerName + "/stream-trigger")] Stream trigger,
             [Blob(ContainerName + "/stream-in", FileAccess.Read)] Stream input,
             [Blob(ContainerName + "/stream-out", FileAccess.Write)] Stream output,
-            [Queue(DoneNotificationFunction.DoneQueueName)] ICollector<string> done)
+            [Queue(DoneNotificationFunction.DoneQueueName)] IAsyncCollector<string> done)
         {
             await trigger.CopyToAsync(output);
             await input.CopyToAsync(output);
-            done.Add("x");
+            await done.AddAsync("x");
         }
 
         public static void TextReaderWriter(
